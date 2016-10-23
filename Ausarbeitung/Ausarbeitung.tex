@@ -13,6 +13,9 @@
 \usepackage{textcomp}
 \usepackage{stmaryrd}
 
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows}
+
 \usepackage[protrusion=true,expansion=true]{microtype}
 
 \usepackage{lmodern}
@@ -81,6 +84,10 @@
 \newcommand{\ClientSet}{\mathscr{C}}
 \newcommand{\FacilitySet}{\mathscr{F}}
 
+\newcommand{\OPT}{\mathrm{OPT}}
+\newcommand{\CLR}{\mathrm{CLR}}
+\newcommand{\MST}{\mathrm{MST}}
+\newcommand{\ULF}{\mathrm{ULF}}
 
 \renewcommand*\theenumi{\alph{enumi}}
 \renewcommand{\labelenumi}{(\theenumi)}
@@ -165,37 +172,38 @@
 	
 	Eine Instanz von \textbf{Capacitated Location Routing with Hard Facility Capacities (CLRHFC)} ist gegeben durch:
 	\begin{itemize}
-		\item einen ungerichteten, zusammenhängenden Graphen $G =(V,E)$,
-		\item einer Partition der Knoten in Klienten $\ClientSet$ und Depots $\FacilitySet$,
-		\item einer metrischen Kostenfunktion auf den Kanten $c: E \to \IR_{geq 0}$,
-		\item Eröffnungskosten für die Fabriken $\phi: \FacilitySet \to \IR_{\geq 0}$,
-		\item Bedarfen der Klienten $d: \ClientSet \to \IR_{\geq 0}$,
-		\item Kapazitäten der Fabriken $l: \FacilitySet \to \IR_{\geq 0}$
-		\item und einer einheitlichen Kapazität $u > 0$ für die Fahrzeuge.		
+		\item eine Instanz $(G=(\ClientSet\cup\FacilitySet,E), c,\phi,d,u)$ von CLR
+		\item und zusätzlich Kapazitäten der Fabriken $l: \FacilitySet \to \IR_{\geq 0}$.
 	\end{itemize}
-	Zulässige Lösungen bestehen aus
-	\begin{itemize}
-		\item einer Teilmenge $F \subseteq \FacilitySet$ von eröffneten Fabriken
-		\item und einer Menge von Touren $\Tc = \{T_1, \dots, T_k\}$,
-	\end{itemize}
-	sodass gilt:
-	\begin{itemize}
-		\item Zu jeder Tour gibt es ein eröffnetes Fabriken $f \in F$, an dem diese startet und endet.
-		\item Alle Touren zusammen erfüllen alle Bedarfe der Klienten.
-		\item Keine der Touren übersteigt die Kapazität $u$.
-		\item Die Kapazitäten der Fabriken werden eingehalten.
-	\end{itemize}
-	Das Optimierungsziel ist es die Gesamtkosten für das Eröffnen der Fabriken und die gefahrenen Touren zu minimieren, also die Minimierung der Kostenfunktion
-	\[\sum_{T\in\Tc} c(T) + \sum_{f\in F}\phi(f) \]
+	Zulässige Lösungen sind Lösungen der zugrunde liegenden CLR-Instanz, die zudem die Kapazitätsschranken der Fabriken einhalten.
+	
+	Das Optimierungsziel weiterhin die Minimierung der Kostenfunktion der CLR-Instanz.
 
 	
 	\section{Visualisierung}
 	
 	\subsection{Der Algorithmus}
 	
-	\missingfigure{Schematische Darstellung des Algorithmus mit farblicher Kennzeichnung der Ausgabestellen}
+	\begin{figure}[h]
+		\begin{tiny}
+			\input{Algorithmus_als_Diagramm}
+		\end{tiny}
+		\caption{Schematische Darstellung des Algorithmus für CLR}
+	\end{figure}
 	
 	\subsection{title}
+	
+	\begin{algorithm}[H]
+		\caption{HomTSP-Approx}\label{AlgHomTSP}
+		\begin{algorithmic}[1]
+			\Procedure{HomTSP}{$G=(V,E)$, $d:E\to \IR_{\geq 0}, k$}
+			\State $\tau \gets$ \textsc{TSP-Approx} $\left(G, d\right)$
+			\State $\left(\pi_i\right)_{i=1}^k \gets$ Teile $\tau$ durch Entfernen von Kanten in $k$ Teilstrecken mit Länge $\leq \frac{d(\tau)}{k}$
+			\State $\left(\tau_i\right)_{i=1}^k \gets$ Verbinde die zwei Endpunkte von $\pi_i$ mit $s$.
+			\State \Return $\left(\tau_i\right)$
+			\EndProcedure
+		\end{algorithmic}
+	\end{algorithm}	
 	
 	\todo[inline]{Beschreibung der Visualisierungs-Klasse}
 		
