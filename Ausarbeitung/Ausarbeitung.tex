@@ -101,14 +101,14 @@
 % DOCUMENT %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{document}
-	\author{Lukas Graf}
-	\date{Letzte Aktualisierung: \today}
-	
-	\selectlanguage{ngerman}
-	\thispagestyle{empty}
-	
-	
-	\begin{titlepage}\center
+\author{Lukas Graf}
+\date{Letzte Aktualisierung: \today}
+
+\selectlanguage{ngerman}
+\thispagestyle{empty}
+
+
+\begin{titlepage}\center
 	\textsc{\LARGE Universität Augsburg}\\[1.5cm]
 	
 	\textsc{\Large Institut für Mathematik}\\[2.5cm]
@@ -135,94 +135,93 @@
 		\end{flushright}
 	\end{minipage}
 	
-	\end{titlepage}
+\end{titlepage}
 
 % CONTENT %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 	
+\section*{\glqq Abstract\grqq}
 
-	\section{Problemdefinitionen}
-	
-	\subsection{Capacitated Location Routing Problem}
-	
-	Eine Instanz des \textbf{Capacitated Location Routing Problems (CLR)} ist gegeben durch:
-	\begin{itemize}
-		\item einen ungerichteten, zusammenhängenden Graphen $G =(V,E)$,
-		\item einer Partition der Knoten in Klienten $\ClientSet$ und Depots $\FacilitySet$,
-		\item einer metrischen Kostenfunktion auf den Kanten $c: E \to \IR_{geq 0}$,
-		\item Eröffnungskosten für die Fabriken $\phi: \FacilitySet \to \IR_{\geq 0}$,
-		\item Bedarfen der Klienten $d: \ClientSet \to \IR_{\geq 0}$
-		\item und einer einheitlichen Kapazität $u > 0$ für die Fahrzeuge.		
-	\end{itemize}
-	Zulässige Lösungen bestehen aus
-	\begin{itemize}
-		\item einer Teilmenge $F \subseteq \FacilitySet$ von eröffneten Fabriken
-		\item und einer Menge von Touren $\Tc = \{T_1, \dots, T_k\}$,
-	\end{itemize}
-	sodass gilt:
-	\begin{itemize}
-		\item Zu jeder Tour gibt es ein eröffnetes Fabriken $f \in F$, an dem diese startet und endet.
-		\item Alle Touren zusammen erfüllen alle Bedarfe der Klienten.
-		\item Keine der Touren übersteigt die Kapazität $u$.
-	\end{itemize}
-	Das Optimierungsziel ist es die Gesamtkosten für das Eröffnen der Fabriken und die gefahrenen Touren zu minimieren, also die Minimierung der Kostenfunktion
-		\[\sum_{T\in\Tc} c(T) + \sum_{f\in F}\phi(f)\footnote{Überladung der Funktion $c$} \]
+\todo[inline]{Zusammenfassung/Überblick der Arbeit}
 
-	\subsection{Capacitated Location Routing with Hard Facility Capacities}
-	
-	Eine Instanz von \textbf{Capacitated Location Routing with Hard Facility Capacities (CLRHFC)} ist gegeben durch:
-	\begin{itemize}
-		\item eine Instanz $(G=(\ClientSet\cup\FacilitySet,E), c,\phi,d,u)$ von CLR
-		\item und zusätzlich Kapazitäten der Fabriken $l: \FacilitySet \to \IR_{\geq 0}$.
-	\end{itemize}
-	Zulässige Lösungen sind Lösungen der zugrunde liegenden CLR-Instanz, die zudem die Kapazitätsschranken der Fabriken einhalten.
-	
-	Das Optimierungsziel weiterhin die Minimierung der Kostenfunktion der CLR-Instanz.
 
-	
-	\section{Visualisierung}
-	
+\section{Das Capacitated Location Routing Problem (CLR)}
+
+	\subsection{Problemdefinition}
+
+Eine Instanz des \textbf{Capacitated Location Routing Problems (CLR)} ist gegeben durch:
+\begin{itemize}
+	\item einen ungerichteten, zusammenhängenden Graphen $G =(V,E)$,
+	\item einer Partition der Knoten in Klienten $\ClientSet$ und Depots $\FacilitySet$,
+	\item einer metrischen Kostenfunktion auf den Kanten $c: E \to \IR_{geq 0}$,
+	\item Eröffnungskosten für die Fabriken $\phi: \FacilitySet \to \IR_{\geq 0}$,
+	\item Bedarfen der Klienten $d: \ClientSet \to \IR_{\geq 0}$
+	\item und einer einheitlichen Kapazität $u > 0$ für die Fahrzeuge.		
+\end{itemize}
+Zulässige Lösungen bestehen aus
+\begin{itemize}
+	\item einer Teilmenge $F \subseteq \FacilitySet$ von eröffneten Fabriken
+	\item und einer Menge von Touren $\Tc = \{T_1, \dots, T_k\}$,
+\end{itemize}
+sodass gilt:
+\begin{itemize}
+	\item Zu jeder Tour gibt es ein eröffnetes Fabriken $f \in F$, an dem diese startet und endet.
+	\item Alle Touren zusammen erfüllen alle Bedarfe der Klienten.
+	\item Keine der Touren übersteigt die Kapazität $u$.
+\end{itemize}
+Das Optimierungsziel ist es die Gesamtkosten für das Eröffnen der Fabriken und die gefahrenen Touren zu minimieren, also die Minimierung der Kostenfunktion
+	\[\sum_{T\in\Tc} c(T) + \sum_{f\in F}\phi(f)\footnote{Überladung der Funktion $c$} \]
+
+
 	\subsection{Der Algorithmus}
+
+\begin{figure}[h]
+	\begin{tiny}
+		\input{Algorithmus_als_Diagramm}
+	\end{tiny}
+	\caption{Schematische Darstellung des Algorithmus für CLR}
+\end{figure}
+
+\subsection{Visualisierung}
+
+\todo[inline]{Beschreibung der Klasse zur Visualisierung}
+
 	
-	\begin{figure}[h]
-		\begin{tiny}
-			\input{Algorithmus_als_Diagramm}
-		\end{tiny}
-		\caption{Schematische Darstellung des Algorithmus für CLR}
-	\end{figure}
+
+\section{Capacitated Location Routing with Hard Facility Capacities}
+
+	\subsection{Problemdefinition}
+
+Eine Instanz von \textbf{Capacitated Location Routing with Hard Facility Capacities (CLRHFC)} ist gegeben durch:
+\begin{itemize}
+	\item eine Instanz $(G=(\ClientSet\cup\FacilitySet,E), c,\phi,d,u)$ von CLR
+	\item und zusätzlich Kapazitäten der Fabriken $l: \FacilitySet \to \IR_{\geq 0}$.
+\end{itemize}
+Zulässige Lösungen sind Lösungen der zugrunde liegenden CLR-Instanz, die zudem die Kapazitätsschranken der Fabriken einhalten.
+
+Das Optimierungsziel weiterhin die Minimierung der Kostenfunktion der CLR-Instanz.
+
+
+	\subsection{Lösungsansätze}
+
+\todo[inline]{Ideen und Probleme für Anpassungen}
+
+	\subsection{Algorithmus}
 	
-	\subsection{title}
-	
-	\begin{algorithm}[H]
-		\caption{HomTSP-Approx}\label{AlgHomTSP}
-		\begin{algorithmic}[1]
-			\Procedure{HomTSP}{$G=(V,E)$, $d:E\to \IR_{\geq 0}, k$}
-			\State $\tau \gets$ \textsc{TSP-Approx} $\left(G, d\right)$
-			\State $\left(\pi_i\right)_{i=1}^k \gets$ Teile $\tau$ durch Entfernen von Kanten in $k$ Teilstrecken mit Länge $\leq \frac{d(\tau)}{k}$
-			\State $\left(\tau_i\right)_{i=1}^k \gets$ Verbinde die zwei Endpunkte von $\pi_i$ mit $s$.
-			\State \Return $\left(\tau_i\right)$
-			\EndProcedure
-		\end{algorithmic}
-	\end{algorithm}	
-	
-	\todo[inline]{Beschreibung der Visualisierungs-Klasse}
-		
-	
-	\section{Anpassungen}
-	
-	\todo[inline]{Ideen und Probleme für Anpassungen}
-	
-	\todo[inline]{Beschreibung des angepassten Algorithmus}
-	
-	\todo[inline]{Untere Schranken}
-	
-	\todo[inline]{Heuristische Beurteilung}
-	
-	
-	\listoftodos
-	
-	\newpage
-	\nocite{*}
-	\printbibliography		
+\todo[inline]{Beschreibung des angepassten Algorithmus}
+
+	\subsection{Analyse des Algorithmus}
+
+\todo[inline]{Untere Schranken}
+
+\todo[inline]{Heuristische Beurteilung}
+
+
+\newpage	
+\listoftodos
+
+\newpage
+\nocite{*}
+\printbibliography		
 			
 \end{document}
