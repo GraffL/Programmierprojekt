@@ -117,7 +117,10 @@
 	{\Large Ausarbeitung \\[1cm]}
 	zum Programmierprojekt\\[1.5cm]
 	{\huge ...}
-		
+
+	\begin{center}
+		\missingfigure[figwidth=.6\textwidth, figheight=.6\textwidth]{BILD}
+	\end{center}		
 	
 	\vfill
 	
@@ -145,7 +148,7 @@
 \todo[inline]{Zusammenfassung/Überblick der Arbeit}
 
 
-\section{Das Capacitated Location Routing Problem (CLR)}
+\section{Capacitated Location Routing (CLR)}
 
 	\subsection{Problemdefinition}
 
@@ -175,7 +178,9 @@ Das Optimierungsziel ist es die Gesamtkosten für das Eröffnen der Fabriken und
 
 	\subsection{Der Algorithmus}
 
-\begin{figure}[h]
+\todo[inline]{Intuition zum Algorithmus}
+
+\begin{figure}[H]
 	\begin{tiny}
 		\input{Algorithmus_als_Diagramm}
 	\end{tiny}
@@ -188,7 +193,7 @@ Das Optimierungsziel ist es die Gesamtkosten für das Eröffnen der Fabriken und
 
 	
 
-\section{Capacitated Location Routing with Hard Facility Capacities}
+\section{CLR with Hard Facility Capacities (CLRHFC)}
 
 	\subsection{Problemdefinition}
 
@@ -201,8 +206,13 @@ Zulässige Lösungen sind Lösungen der zugrunde liegenden CLR-Instanz, die zude
 
 Das Optimierungsziel weiterhin die Minimierung der Kostenfunktion der CLR-Instanz.
 
+\begin{bem}
+	\todo[inline]{Im Unterschied zu harten Kapazitäten gibt es auch die Variante mit weichen Kapazitäten (zumindest für ULF) - vgl. zum Beispiel ...}
+\end{bem}
 
 	\subsection{Lösungsansätze}
+	
+	Zunächst einmal ist klar, dass es nicht genügen wird, nur die Merge-Phase des Algorithmus für $\CLR$ anzupassen. Denn die bereits in der $\ULF$- und der $\MST$-Phase gefällte Entscheidung welche und wie viele Fabriken eröffnet werden, muss offenkundig 
 
 \todo[inline]{Ideen und Probleme für Anpassungen}
 
@@ -210,12 +220,30 @@ Das Optimierungsziel weiterhin die Minimierung der Kostenfunktion der CLR-Instan
 	
 \todo[inline]{Beschreibung des angepassten Algorithmus}
 
-	\subsection{Analyse des Algorithmus}
+	\subsubsection{Algorithmus 1}
+	
+	\subsubsection{Algorithmus 2}
+	
 
-\todo[inline]{Untere Schranken}
+	\subsection{Implementierungen}
+	
 
-\todo[inline]{Heuristische Beurteilung}
+	\subsection{Analyse der Algorithmen}
+	
+	\subsubsection{Theoretische Betrachtungen}
 
+		\todo[inline]{Untere Schranken}
+		
+		\todo[inline]{Schlechte Beispiele}
+		
+	\subsubsection{Heuristische Beurteilung}
+
+
+	\subsection{Ausblick}
+	
+	\todo[inline]{Was könnte man verbessern? Welche Probleme gibt es dabei?}
+	
+	
 
 \newpage	
 \listoftodos
