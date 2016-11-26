@@ -83,9 +83,11 @@
 
 \newcommand{\ClientSet}{\mathscr{C}}
 \newcommand{\FacilitySet}{\mathscr{F}}
+\newcommand{\allTours}{\mathscr{T}}
 
 \newcommand{\OPT}{\mathrm{OPT}}
 \newcommand{\CLR}{\mathrm{CLR}}
+\newcommand{\CLRHFC}{\mathrm{CLRhFC}}
 \newcommand{\MST}{\mathrm{MST}}
 \newcommand{\ULF}{\mathrm{ULF}}
 
@@ -119,7 +121,7 @@
 	{\huge ...}
 
 	\begin{center}
-		\missingfigure[figwidth=.6\textwidth, figheight=.6\textwidth]{BILD}
+		\includegraphics[width=.6\textwidth]{bilder/title.pdf}
 	\end{center}		
 	
 	\vfill
@@ -155,10 +157,10 @@
 Eine Instanz des \textbf{Capacitated Location Routing Problems (CLR)} ist gegeben durch:
 \begin{itemize}
 	\item einen ungerichteten, zusammenhängenden Graphen $G =(V,E)$,
-	\item einer Partition der Knoten in Klienten $\ClientSet$ und Depots $\FacilitySet$,
-	\item einer metrischen Kostenfunktion auf den Kanten $c: E \to \IR_{geq 0}$,
+	\item einer Partition der Knoten in Kunden $\ClientSet$ und Fabrikstandorte $\FacilitySet$,
+	\item einer metrischen Kostenfunktion auf den Kanten $c: E \to \IR_{\geq 0}$,
 	\item Eröffnungskosten für die Fabriken $\phi: \FacilitySet \to \IR_{\geq 0}$,
-	\item Bedarfen der Klienten $d: \ClientSet \to \IR_{\geq 0}$
+	\item Bedarfe der Kunden $d: \ClientSet \to \IR_{\geq 0}$
 	\item und einer einheitlichen Kapazität $u > 0$ für die Fahrzeuge.		
 \end{itemize}
 Zulässige Lösungen bestehen aus
@@ -168,53 +170,71 @@ Zulässige Lösungen bestehen aus
 \end{itemize}
 sodass gilt:
 \begin{itemize}
-	\item Zu jeder Tour gibt es ein eröffnetes Fabriken $f \in F$, an dem diese startet und endet.
-	\item Alle Touren zusammen erfüllen alle Bedarfe der Klienten.
+	\item Zu jeder Tour gibt es eine geöffnete Fabrik $f \in F$, an der diese startet und endet.
+	\item Alle Touren zusammen erfüllen alle Bedarfe der Kunden.
 	\item Keine der Touren übersteigt die Kapazität $u$.
 \end{itemize}
 Das Optimierungsziel ist es die Gesamtkosten für das Eröffnen der Fabriken und die gefahrenen Touren zu minimieren, also die Minimierung der Kostenfunktion
-	\[\sum_{T\in\Tc} c(T) + \sum_{f\in F}\phi(f)\footnote{Überladung der Funktion $c$} \]
+\footnote{Wir verwenden hier, dass eine Funktion $\IR$-wertige Funktion $c: M \to \IR$ auf einer Menge $M$ eine Funktion $\tilde{c}: \mathcal{P}(M) \to \IR: M \supseteq N \mapsto \sum_{x \in N} c(x)$ auf der Potenzmenge $\mathcal{P}(M)$ induziert. Zur Vereinfachung der Notation bezeichnen wir diese Funktion dann ebenfalls mit $c$. Unter nochmaliger Anwendung dieser Konvention ließe sich die obige Kostenfunktion daher auch als $c(\Tc) + \phi(F)$ schreiben.}
+	\[\sum_{T\in\Tc} c(T) + \sum_{f\in F}\phi(f) \]
+	
+\begin{beob}
+	$\CLR{}$ ist NP-schwer, denn es beinhaltet beispielsweise metrisches TSP (betrachte Instanzen mit $|\FacilitySet| = 1$, $d \equiv 1$ und $u = |\ClientSet|$).
+\end{beob}
 
 
-	\subsection{Der Algorithmus}
+	\subsection{Ein Approximationsalgorithmus für $\CLR$}
 
-\todo[inline]{Intuition zum Algorithmus}
+Der in \cite{AAfCLR} beschriebene $4,38$-approximative Algorithmus für $\CLR$ basiert im Wesentlichen auf den folgenden Schritten (schematisch dargestellt in \cref{fig:CLRAlg}):
+
+\todo[inline]{Algorithmus beschreiben (auf schlechtere Approximationsgüte der Implementierung hinweisen!)}
+
 
 \begin{figure}[H]
 	\begin{tiny}
 		\input{Algorithmus_als_Diagramm}
 	\end{tiny}
-	\caption{Schematische Darstellung des Algorithmus für CLR}
+	\caption{Schematische Darstellung des Algorithmus für CLR}\label{fig:CLRAlg}
 \end{figure}
 
 \subsection{Visualisierung}
 
-\todo[inline]{Beschreibung der Klasse zur Visualisierung}
+Im ersten Teil des Programmierprojektes ging es darum den Ablauf sowie das Ergebnis des oben beschriebenen Algorithmus zu visualisieren. Dazu wurde die existierende Implementierung des Algorithmus um eine Klasse \texttt{CLR\_Drawing} erweitert. Diese wird zu Beginn des Algorithmus mit der zu lösenden Instanz initialisiert und kann dann an verschiedenen Stellen des Algorithmus aufgerufen werden, um einen Schnappschuss mit dem momentanen Stand zu erstellen. 
+
+\todo[inline]{Klasse detaillierter Beschreiben + BILDER!}
 
 	
 
-\section{CLR with Hard Facility Capacities (CLRHFC)}
+\section{$\CLR$ with Hard Facility Capacities ($\CLRHFC$)}
 
 	\subsection{Problemdefinition}
 
-Eine Instanz von \textbf{Capacitated Location Routing with Hard Facility Capacities (CLRHFC)} ist gegeben durch:
+Eine Instanz von \textbf{Capacitated Location Routing with Hard Facility Capacities ($\CLRHFC$)} ist gegeben durch:
 \begin{itemize}
-	\item eine Instanz $(G=(\ClientSet\cup\FacilitySet,E), c,\phi,d,u)$ von CLR
+	\item eine Instanz $(G=(\ClientSet\cup\FacilitySet,E), c,\phi,d,u)$ von $\CLR$
 	\item und zusätzlich Kapazitäten der Fabriken $l: \FacilitySet \to \IR_{\geq 0}$.
 \end{itemize}
-Zulässige Lösungen sind Lösungen der zugrunde liegenden CLR-Instanz, die zudem die Kapazitätsschranken der Fabriken einhalten.
+Zulässige Lösungen sind Lösungen der zugrunde liegenden $\CLR$-Instanz, die zudem die Kapazitätsschranken der Fabriken einhalten.
 
-Das Optimierungsziel weiterhin die Minimierung der Kostenfunktion der CLR-Instanz.
+Das Optimierungsziel ist weiterhin die Minimierung der unveränderten Kostenfunktion der $\CLR$-Instanz.
 
 \begin{bem}
-	\todo[inline]{Im Unterschied zu harten Kapazitäten gibt es auch die Variante mit weichen Kapazitäten (zumindest für ULF) - vgl. zum Beispiel ...}
+Es gibt auch Varianten von $\CLR$ mit \emph{weichen Fabrikkapazitäten}. 
+
+\todo[inline]{Näher erklären, Quellen (z.B. 10.1007/s00453-007-9032-7 ?)}
 \end{bem}
 
 	\subsection{Lösungsansätze}
 	
-	Zunächst einmal ist klar, dass es nicht genügen wird, nur die Merge-Phase des Algorithmus für $\CLR$ anzupassen. Denn die bereits in der $\ULF$- und der $\MST$-Phase gefällte Entscheidung welche und wie viele Fabriken eröffnet werden, muss offenkundig 
-
-\todo[inline]{Ideen und Probleme für Anpassungen}
+	Um überhaupt zulässige Lösungen für $\CLRHFC$ zu finden, muss der bestehende Algorithmus an wenigstens zwei Stellen angepasst werden: Beim Erstellen der Touren muss nun zusätzlich darauf geachtet werden, dass die Kapazität der ausgewählten Fabrik nicht überschritten wird. Und zudem muss sichergestellt werden, dass überhaupt immer offene Fabriken mit freier Kapazität verfügbar sind.
+	
+	Ersteres lässt sich sicherstellen, indem Touren gegebenenfalls noch weiter in Teiltouren aufgespalten werden, die jeweils klein genug sind, um von einer einzelnen offenen Fabrik vollständig beliefert zu werden.
+	
+	Für letzteres gibt es zwei naheliegende Ansätze: Entweder man passt die $\ULF$- und/oder $\MST$-Phase so an, dass bereits hier die Fabrikkapazitäten berücksichtigt und dementsprechend viele Fabriken geöffnet werden. Oder man erlaubt dem Algorithmus noch in der Large-Demand- bzw. Merge-Phase bei Bedarf zusätzliche Fabriken zu eröffnen. 
+	
+	Der erste Ansatz ließe sich beispielsweise dadurch verwirklichen, dass statt einer $\ULF$-Instanz eine Instanz des \emph{nonuniform Capacitated Facility Location Problem}s erstellt und (approximativ) gelöst wird. Ein entsprechender auf lokaler Suche basierender Approximationsalgorithmus wird in \cite{Pal01facilitylocation} beschrieben. Alternativ (oder auch zusätzlich) könnte man versuchen beim Erstellen des Spannbaumes die Fabrikkapazitäten zu berücksichtigen. Dies hätte möglicherweise den Vorteil \todo{Add Vorteil}. Allerdings ist nicht klar, wie eine entsprechende Anpassung dieser Phase aussehen könnte.
+	
+	Der zweite Ansatz - neue Fabriken bei Bedarf eröffnen - ist dagegen deutlich leichter zu implementieren und ist daher auch der, der in diesem Programmierprojekt weiterverfolgt wurde. Er hat allerdings den Nachteil, dass dadurch der Zusammenhang zwischen den Kosten der in $\ULF$- und $\MST$-Phase gefundenen Lösungen und denen der letztendlich bestimmten Lösung der $\CLRHFC$-Instanz verloren gehen. \todo{siehe \cref{sec:Analyse}}
 
 	\subsection{Algorithmus}
 	
@@ -227,8 +247,12 @@ Das Optimierungsziel weiterhin die Minimierung der Kostenfunktion der CLR-Instan
 
 	\subsection{Implementierungen}
 	
+	\subsubsection{Zulässigkeitsprüfung}
+	
+	\todo[inline]{Beschreibe Edmonds-Karp-Implementierung}
+	
 
-	\subsection{Analyse der Algorithmen}
+	\subsection{Analyse der Algorithmen}\label{sec:Analyse}
 	
 	\subsubsection{Theoretische Betrachtungen}
 
@@ -237,6 +261,15 @@ Das Optimierungsziel weiterhin die Minimierung der Kostenfunktion der CLR-Instan
 		\todo[inline]{Schlechte Beispiele}
 		
 	\subsubsection{Heuristische Beurteilung}
+	
+	\begin{align*}
+		\text{minimiere} 	&\sum_{f \in \FacilitySet} o_f \phi(f) + \sum_{T \in \allTours} y_T c(T)&	  &		& 										\\
+		\text{unter d. N.:} &\sum_{v \in T\backslash\FacilitySet} x_{vT} 							&\leq &u y_T &, T \in \allTours 					\\
+							&\sum_{T \in \allTours_f} \sum_{v \in T\backslash\FacilitySet} x_{vT} 	&\leq &l(f) 	&, f \in \FacilitySet				\\
+							&y_T 											&\leq &\left(l(f)/u + 1\right)o_f	&, f \in \FacilitySet, T \in \allTours_f \\
+							&\sum_{T \in \allTours, v \in T} x_{vT} 								&\geq &d(v)	&, v \in \ClientSet						\\
+							&o_f \in \{0,1\},\quad y_T \in \IN_0, \quad x_{vT} \geq 0				& 	  &		&
+	\end{align*}
 
 
 	\subsection{Ausblick}
