@@ -52,10 +52,10 @@
 \node [Text, left of=m-facilities, node distance=25em, text width=15em] () 
 	{beschränkt durch die entsprechenden Eröffnungskosten in $\ULF$ und $\MST$};
 
-% Große Klienten
+% Große Kunden
 \node [Alg, below of=m-facilities, node distance=4em] (m-big-clients) {
 		\begin{minipage}{30em}\begin{algorithmic}
-		\For{Klienten $v$ mit $d(v)\geq u$}
+		\For{Kunden $v$ mit $d(v)\geq u$}
 			\State Verbinde $v$ durch $\frac{d(v)}{u}$ Touren mit nächster offener Fabrik
 		\EndFor
 		\end{algorithmic}\end{minipage}
@@ -67,7 +67,7 @@
 \node [Text, left of=m-big-clients, node distance=25em, text width=15em] () 
 	{beschränkt durch $2\times$ den entsprechenden Verbindungskosten in $\ULF$};
 
-% Kleine Klienten
+% Kleine Kunden
 \node [Alg, below of=m-big-clients, node distance=4em] (m-small-clients) {
 		\begin{minipage}{30em}\begin{algorithmic}\algtext*{EndFor}
 		\For{Durch $\MST$ eröffnete Fabrik $f$ tue}

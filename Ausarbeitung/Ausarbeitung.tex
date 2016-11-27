@@ -91,6 +91,9 @@
 \newcommand{\MST}{\mathrm{MST}}
 \newcommand{\ULF}{\mathrm{ULF}}
 
+% C++ from http://tex.stackexchange.com/a/4304
+\def\Cpp{{C\nolinebreak[4]\hspace{-.05em}\raisebox{.4ex}{\tiny\bf ++}}}
+
 \renewcommand*\theenumi{\alph{enumi}}
 \renewcommand{\labelenumi}{(\theenumi)}
 
@@ -111,14 +114,14 @@
 
 
 \begin{titlepage}\center
-	\textsc{\LARGE Universität Augsburg}\\[1.5cm]
+	\textsc{\LARGE Universität Augsburg}\\[1cm]
 	
-	\textsc{\Large Institut für Mathematik}\\[2.5cm]
+	\textsc{\Large Institut für Mathematik}\\[1.5cm]
 	
 	% Title
 	{\Large Ausarbeitung \\[1cm]}
-	zum Programmierprojekt\\[1.5cm]
-	{\huge ...}
+	zum Programmierprojekt\\[1cm]
+	{\huge Capacitated Location Routing \\ with Hard Facility Capacities}
 
 	\begin{center}
 		\includegraphics[width=.6\textwidth]{bilder/title.pdf}
@@ -144,6 +147,10 @@
 
 % CONTENT %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+
+\tableofcontents
+
+\newpage
 	
 \section*{\glqq Abstract\grqq}
 
@@ -154,14 +161,14 @@
 
 	\subsection{Problemdefinition}
 
-Eine Instanz des \textbf{Capacitated Location Routing Problems (CLR)} ist gegeben durch:
+Eine Instanz des \textbf{Capacitated Location Routing Problems (CLR)} ist gegeben durch
 \begin{itemize}
 	\item einen ungerichteten, zusammenhängenden Graphen $G =(V,E)$,
-	\item einer Partition der Knoten in Kunden $\ClientSet$ und Fabrikstandorte $\FacilitySet$,
-	\item einer metrischen Kostenfunktion auf den Kanten $c: E \to \IR_{\geq 0}$,
+	\item eine Partition der Knoten in Kunden $\ClientSet$ und Fabrikstandorte $\FacilitySet$,
+	\item eine metrischen Kostenfunktion auf den Kanten $c: E \to \IR_{\geq 0}$,
 	\item Eröffnungskosten für die Fabriken $\phi: \FacilitySet \to \IR_{\geq 0}$,
 	\item Bedarfe der Kunden $d: \ClientSet \to \IR_{\geq 0}$
-	\item und einer einheitlichen Kapazität $u > 0$ für die Fahrzeuge.		
+	\item und eine einheitliche Kapazität $u > 0$ für die Fahrzeuge.		
 \end{itemize}
 Zulässige Lösungen bestehen aus
 \begin{itemize}
@@ -197,15 +204,36 @@ Der in \cite{AAfCLR} beschriebene $4,38$-approximative Algorithmus für $\CLR$ b
 	\caption{Schematische Darstellung des Algorithmus für CLR}\label{fig:CLRAlg}
 \end{figure}
 
-\subsection{Visualisierung}
+\subsection{Visualisierung des Algorithmus}
 
 Im ersten Teil des Programmierprojektes ging es darum den Ablauf sowie das Ergebnis des oben beschriebenen Algorithmus zu visualisieren. Dazu wurde die existierende Implementierung des Algorithmus um eine Klasse \texttt{CLR\_Drawing} erweitert. Diese wird zu Beginn des Algorithmus mit der zu lösenden Instanz initialisiert und kann dann an verschiedenen Stellen des Algorithmus aufgerufen werden, um einen Schnappschuss mit dem momentanen Stand zu erstellen. 
 
-\todo[inline]{Klasse detaillierter Beschreiben + BILDER!}
+Die Ausgabe besteht aus SVG-Dateien, die mit Hilfe der \Cpp-Bibliothek simple-svg (\cite{simple-svg}) erstellt werden. Diese können dann beispielsweise von Hand übereinander gelegt werden, um ein bestimmtes Zwischenstadium des Algorithmus darzustellen, oder zu einer Animation zusammengesetzt werden, um den gesamten Ablauf des Algorithmus abzubilden. 
+
+\begin{figure}[H]\centering\setlength{\fboxsep}{0pt}
+	\fbox{\includegraphics[width=.19\textwidth]{bilder/demo_instance.pdf}}
+	\fbox{\includegraphics[width=.19\textwidth]{bilder/demo_ULF.pdf}}
+	\fbox{\includegraphics[width=.19\textwidth]{bilder/demo_Tree.pdf}}
+	\fbox{\includegraphics[width=.19\textwidth]{bilder/demo_LargeDemand.pdf}}
+	\fbox{\includegraphics[width=.19\textwidth]{bilder/demo_relieveTree.pdf}}
+	
+	\fbox{\includegraphics[width=.19\textwidth]{bilder/demo_relieveTour.pdf}}
+	\fbox{\includegraphics[width=.19\textwidth]{bilder/demo_remainingTour.pdf}}
+	\fbox{\includegraphics[width=.19\textwidth]{bilder/demo_singleTour.pdf}}
+	\fbox{\includegraphics[width=.19\textwidth]{bilder/demo_allTours.pdf}}
+	
+	\caption{Ausgabe der Klasse \texttt{CLR\_Drawing}: Die Instanz selbst, die Lösung der ULF-Instanz, die Lösung der MST-Instanz, Touren aus der Large-Demand-Phase, ein Relieve-Tree, eine daraus entstandene Tour, eine Remaining-Tour, eine einzelne Tour, alle Touren}
+\end{figure}
+
+Ein Beispiel für ersteres sind die Bilder in dieser Arbeit, als Beispiel für Letztes \todo{Verweis auf Webseite/Anhang/...?}...
+
+\todo[inline]{Klasse detaillierter beschreiben?}
 
 	
 
 \section{$\CLR$ with Hard Facility Capacities ($\CLRHFC$)}
+
+Eine Verallgemeinerung von $\CLR$ erhält man, indem man die Kapazitäten der Fabriken beschränkt. In diesem Kapitel geht es darum, wie der Approximationsalgorithmus für $\CLR$ so angepasst werden kann, dass er auch für das neue Problem zulässige Lösungen findet.
 
 	\subsection{Problemdefinition}
 
@@ -226,11 +254,11 @@ Es gibt auch Varianten von $\CLR$ mit \emph{weichen Fabrikkapazitäten}.
 
 	\subsection{Lösungsansätze}
 	
-	Um überhaupt zulässige Lösungen für $\CLRHFC$ zu finden, muss der bestehende Algorithmus an wenigstens zwei Stellen angepasst werden: Beim Erstellen der Touren muss nun zusätzlich darauf geachtet werden, dass die Kapazität der ausgewählten Fabrik nicht überschritten wird. Und zudem muss sichergestellt werden, dass überhaupt immer offene Fabriken mit freier Kapazität verfügbar sind.
+	Um überhaupt zulässige Lösungen für $\CLRHFC$ zu finden, muss der bestehende Algorithmus an wenigstens zwei Stellen angepasst werden: Beim Erstellen der Touren muss nun zusätzlich darauf geachtet werden, dass die Kapazität der ausgewählten Fabrik nicht überschritten wird. Des Weiteren muss gewährleistet sein, dass überhaupt immer offene Fabriken mit freier Kapazität verfügbar sind.
 	
 	Ersteres lässt sich sicherstellen, indem Touren gegebenenfalls noch weiter in Teiltouren aufgespalten werden, die jeweils klein genug sind, um von einer einzelnen offenen Fabrik vollständig beliefert zu werden.
 	
-	Für letzteres gibt es zwei naheliegende Ansätze: Entweder man passt die $\ULF$- und/oder $\MST$-Phase so an, dass bereits hier die Fabrikkapazitäten berücksichtigt und dementsprechend viele Fabriken geöffnet werden. Oder man erlaubt dem Algorithmus noch in der Large-Demand- bzw. Merge-Phase bei Bedarf zusätzliche Fabriken zu eröffnen. 
+	Für Letzteres gibt es zwei naheliegende Ansätze: Entweder man passt die $\ULF$- und/oder $\MST$-Phase so an, dass bereits hier die Fabrikkapazitäten berücksichtigt und dementsprechend viele Fabriken geöffnet werden. Oder man erlaubt dem Algorithmus noch in der Large-Demand- bzw. Merge-Phase bei Bedarf zusätzliche Fabriken zu eröffnen. 
 	
 	Der erste Ansatz ließe sich beispielsweise dadurch verwirklichen, dass statt einer $\ULF$-Instanz eine Instanz des \emph{nonuniform Capacitated Facility Location Problem}s erstellt und (approximativ) gelöst wird. Ein entsprechender auf lokaler Suche basierender Approximationsalgorithmus wird in \cite{Pal01facilitylocation} beschrieben. Alternativ (oder auch zusätzlich) könnte man versuchen beim Erstellen des Spannbaumes die Fabrikkapazitäten zu berücksichtigen. Dies hätte möglicherweise den Vorteil \todo{Add Vorteil}. Allerdings ist nicht klar, wie eine entsprechende Anpassung dieser Phase aussehen könnte.
 	
@@ -248,6 +276,64 @@ Es gibt auch Varianten von $\CLR$ mit \emph{weichen Fabrikkapazitäten}.
 	\subsection{Implementierungen}
 	
 	\subsubsection{Zulässigkeitsprüfung}
+	
+	\begin{figure}
+	\tikzstyle{vertex} = [circle,draw]
+	\tikzstyle{edge} = [draw]
+	\tikzstyle{beschr} = []
+	\tikzstyle{beschrR} = [text width=10cm]
+	\begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=2.5cm,thick]
+	
+	\node[vertex] (quelle) {Quelle};
+		\node[beschr, left of=quelle, node distance=6cm](bQuelle) {};
+		\node[beschrR, right of=quelle, node distance=10cm](bRQuelle) {};
+	
+	\node[below of=quelle] (fs) {$\dots$};		
+		\node[beschr, below of=bQuelle](bFs) {Fabriken:};
+		\node[beschrR, below of=bRQuelle, node distance=3.5cm](bRFs) {verbinde $f$ mit $T$, \\ falls $T$ bei $f$ beginnt};
+	\node[vertex, left of=fs] (f1) {$f_1$};
+	\node[vertex, right of=fs] (fm) {$f_m$};
+	
+	\node[below of=f1] (T1) {$\dots$};
+		\node[beschr, below of=bFs](bTs) {Touren:};
+		\node[beschrR, below of=bRFs, node distance=3cm](bRTs) {verbinde $T$ mit $v$, \\ falls $v$ auf $T$ liegt};
+	\node[vertex, left of=T1, node distance=1cm] (T11) {$T_{11}$};
+	\node[vertex, right of=T1, node distance=1cm] (T1k) {$T_{1k_1}$};
+
+	\node[below of=fm] (Tm) {$\dots$};
+	\node[vertex, left of=Tm, node distance=1cm] (Tm1) {$T_{m1}$};
+	\node[vertex, right of=Tm, node distance=1cm] (Tmk) {$T_{mk_m}$};	
+	
+	\node[below of=fs] (Ts) {};
+	\node[below of=Ts] (vs) {$\dots$};
+		\node[beschr, below of=bTs](bVs) {Kunden:};
+	\node[vertex, left of=vs] (v1) {$v_1$};
+	\node[vertex, right of=vs] (vn) {$v_n$};
+	
+	\node[vertex, below of=vs] (senke) {Senke};
+	
+	
+	\path[edge] (quelle) to node[left] {$l(f_1)$} (f1);
+	\path[edge] (quelle) to node[right] {$l(f_m)$} (fm);
+	
+	\path[edge] (f1) to node[left] {$u$} (T11);
+	\path[edge] (f1) to node[right] {$u$} (T1k);
+	\path[edge] (fm) to node[left] {$u$} (Tm1);
+	\path[edge] (fm) to node[right] {$u$} (Tmk);
+	
+	\path[edge] (T11) to node[left] {$u$} (v1);
+	\path[edge] (T1k) to node[left] {$u$} (v1);
+	\path[edge] (T1k) to node[right] {$u$} (vn);
+	\path[edge] (Tm1) to node[left] {$u$} (v1);
+	\path[edge] (Tm1) to node[right] {$u$} (vn);
+	\path[edge] (Tmk) to node[right] {$u$} (vn);
+	
+	\path[edge] (v1) to node[left] {$d(v_1)$} (senke);
+	\path[edge] (vn) to node[right] {$d(v_n)$} (senke);	
+	
+	\end{tikzpicture}
+	\caption{Die MaxFlow-Instanz \todo[inline]{genauere Beschreibung}}\label{fig:MaxFlowGraph}
+	\end{figure}
 	
 	\todo[inline]{Beschreibe Edmonds-Karp-Implementierung}
 	
