@@ -1,4 +1,4 @@
-\documentclass[a4paper,ngerman,12pt,bibtotoc]{scrartcl}
+\documentclass[a4paper,ngerman,11pt,bibtotoc]{scrartcl}
 
 \usepackage[utf8]{inputenc}
 
@@ -277,32 +277,32 @@ Es gibt auch Varianten von $\CLR$ mit \emph{weichen Fabrikkapazitäten}.
 	
 	\subsubsection{Zulässigkeitsprüfung}
 	
-	\begin{figure}
+	\begin{figure}[H]
 	\tikzstyle{vertex} = [circle,draw]
 	\tikzstyle{edge} = [draw]
 	\tikzstyle{beschr} = []
-	\tikzstyle{beschrR} = [text width=10cm]
-	\begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=2.5cm,thick]
+	\tikzstyle{beschrR} = [text width=25em]
+	\begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=6em,thick]
 	
 	\node[vertex] (quelle) {Quelle};
-		\node[beschr, left of=quelle, node distance=6cm](bQuelle) {};
-		\node[beschrR, right of=quelle, node distance=10cm](bRQuelle) {};
+		\node[beschr, left of=quelle, node distance=15em](bQuelle) {};
+		\node[beschrR, right of=quelle, node distance=25em](bRQuelle) {};
 	
 	\node[below of=quelle] (fs) {$\dots$};		
 		\node[beschr, below of=bQuelle](bFs) {Fabriken:};
-		\node[beschrR, below of=bRQuelle, node distance=3.5cm](bRFs) {verbinde $f$ mit $T$, \\ falls $T$ bei $f$ beginnt};
+		\node[beschrR, below of=bRQuelle, node distance=8.5em](bRFs) {verbinde $f$ mit $T$, \\ falls $T$ bei $f$ beginnt};
 	\node[vertex, left of=fs] (f1) {$f_1$};
 	\node[vertex, right of=fs] (fm) {$f_m$};
 	
 	\node[below of=f1] (T1) {$\dots$};
 		\node[beschr, below of=bFs](bTs) {Touren:};
-		\node[beschrR, below of=bRFs, node distance=3cm](bRTs) {verbinde $T$ mit $v$, \\ falls $v$ auf $T$ liegt};
-	\node[vertex, left of=T1, node distance=1cm] (T11) {$T_{11}$};
-	\node[vertex, right of=T1, node distance=1cm] (T1k) {$T_{1k_1}$};
+		\node[beschrR, below of=bRFs, node distance=7em](bRTs) {verbinde $T$ mit $v$, \\ falls $v$ auf $T$ liegt};
+	\node[vertex, left of=T1, node distance=2.5em] (T11) {$T_{11}$};
+	\node[vertex, right of=T1, node distance=2.5em] (T1k) {$T_{1k_1}$};
 
 	\node[below of=fm] (Tm) {$\dots$};
-	\node[vertex, left of=Tm, node distance=1cm] (Tm1) {$T_{m1}$};
-	\node[vertex, right of=Tm, node distance=1cm] (Tmk) {$T_{mk_m}$};	
+	\node[vertex, left of=Tm, node distance=2.5em] (Tm1) {$T_{m1}$};
+	\node[vertex, right of=Tm, node distance=2.5em] (Tmk) {$T_{mk_m}$};	
 	
 	\node[below of=fs] (Ts) {};
 	\node[below of=Ts] (vs) {$\dots$};
@@ -348,14 +348,33 @@ Es gibt auch Varianten von $\CLR$ mit \emph{weichen Fabrikkapazitäten}.
 		
 	\subsubsection{Heuristische Beurteilung}
 	
-	\begin{align*}
-		\text{minimiere} 	&\sum_{f \in \FacilitySet} o_f \phi(f) + \sum_{T \in \allTours} y_T c(T)&	  &		& 										\\
-		\text{unter d. N.:} &\sum_{v \in T\backslash\FacilitySet} x_{vT} 							&\leq &u y_T &, T \in \allTours 					\\
-							&\sum_{T \in \allTours_f} \sum_{v \in T\backslash\FacilitySet} x_{vT} 	&\leq &l(f) 	&, f \in \FacilitySet				\\
-							&y_T 											&\leq &\left(l(f)/u + 1\right)o_f	&, f \in \FacilitySet, T \in \allTours_f \\
-							&\sum_{T \in \allTours, v \in T} x_{vT} 								&\geq &d(v)	&, v \in \ClientSet						\\
-							&o_f \in \{0,1\},\quad y_T \in \IN_0, \quad x_{vT} \geq 0				& 	  &		&
-	\end{align*}
+	$\CLRHFC$ kann wie folgt als Mixed Integer Program (MIP) beschrieben werden:
+	
+	\begin{center}
+		minimiere
+		\begin{align*}\sum_{f \in \FacilitySet} o_f \phi(f) + \sum_{T \in \allTours} y_T c(T)\end{align*}
+		unter den Nebenbedingungen:
+		\begin{align}	\sum_{v \in T\backslash\FacilitySet} x_{vT} \leq u y_T 								&,\quad T \in \allTours 						\\
+						\sum_{T \in \allTours_f} \sum_{v \in T\backslash\FacilitySet} x_{vT} \leq o_f l(f)	&,\quad f \in \FacilitySet						\\
+						\sum_{T \in \allTours, v \in T} x_{vT} \geq d(v)									&,\quad v \in \ClientSet					
+		\end{align}
+		wobei
+		\begin{align*}o_f \in \{0,1\},\quad y_T \in \IN_0, \quad x_{vT} \geq 0\end{align*}
+	\end{center}
+
+	Dabei gibt es 
+	\begin{itemize}
+		\item für jede Fabrik eine Variable $o_f$, welche bestimmt, ob die entsprechende Fabrik geöffnet ($1$) ist oder nicht ($0$),
+		\item sowie für jede mögliche Tour $T$ eine Variabel $y_T$, welche bestimmt, wie oft die entsprechende Tour genutzt wird,
+		\item und für jeden auf $T$ liegenden Kunden $v$ eine Variable $x_{vT}$, welche besagt, wie viele Einheiten durch Tour $T$ insgesamt an den Kunden $v$ geliefert werden.
+	\end{itemize}
+
+	Die Nebenbedingungen bekommen damit die folgende Bedeutung:
+	\begin{enumerate}\renewcommand{\theenumi}{\arabic{enumi}}
+		\item Die Fahrzeugkapazität ($u$) wird eingehalten. D.h. wird eine Tour $y_T$-mal genutzt, so können durch sie höchstens $y_T u$ Einheiten an die auf ihr liegenden Kunden geliefert werden.
+		\item Die Fabrikkapazitäten ($l$) werden eingehalten. Alle bei eine Fabrik $f$ beginnenden Touren ($\allTours_f$) können zusammen höchstens so viele Einheiten ausliefern, wie die Fabrikkapazität $l(f)$ zulässt.
+		\item Die Bedarfe der Kunden ($d$) werden erfüllt. Dies ist der Fall, wenn alle Touren, auf denen ein Kunde $v$ liegt, zusammen mindestens so viel an ihn liefern, wie sein Bedarf $d(v)$ ist.
+	\end{enumerate}
 
 
 	\subsection{Ausblick}
