@@ -252,28 +252,61 @@ Es gibt auch Varianten von $\CLR$ mit \emph{weichen Fabrikkapazitäten}.
 \todo[inline]{Näher erklären, Quellen (z.B. 10.1007/s00453-007-9032-7 ?)}
 \end{bem}
 
+$\CLRHFC$ kann auch wie folgt als Mixed Integer Program (MIP) beschrieben werden:
+
+\begin{center}
+	minimiere
+	\begin{align*}\sum_{f \in \FacilitySet} o_f \phi(f) + \sum_{T \in \allTours} y_T c(T)\end{align*}
+	unter den Nebenbedingungen:
+	\begin{align}	\sum_{v \in T\backslash\FacilitySet} x_{vT} \leq u y_T 								&,\quad T \in \allTours 						\\
+	\sum_{T \in \allTours_f} \sum_{v \in T\backslash\FacilitySet} x_{vT} \leq o_f l(f)	&,\quad f \in \FacilitySet						\\
+	\sum_{T \in \allTours, v \in T} x_{vT} \geq d(v)									&,\quad v \in \ClientSet					
+	\end{align}
+	wobei
+	\begin{align*}o_f \in \{0,1\},\quad y_T \in \IN_0, \quad x_{vT} \geq 0\end{align*}
+\end{center}
+
+Dabei gibt es 
+\begin{itemize}
+	\item für jede Fabrik eine Variable $o_f$, welche bestimmt, ob die entsprechende Fabrik geöffnet ($1$) ist oder nicht ($0$),
+	\item sowie für jede mögliche Tour $T$ eine Variabel $y_T$, welche bestimmt, wie oft die entsprechende Tour genutzt wird,
+	\item und für jeden auf $T$ liegenden Kunden $v$ eine Variable $x_{vT}$, welche besagt, wie viele Einheiten durch Tour $T$ insgesamt an den Kunden $v$ geliefert werden.
+\end{itemize}
+
+Die Nebenbedingungen bekommen damit die folgende Bedeutung:
+\begin{enumerate}\renewcommand{\theenumi}{\arabic{enumi}}
+	\item Die Fahrzeugkapazität ($u$) wird eingehalten. D.h. wird eine Tour $y_T$-mal genutzt, so können durch sie höchstens $y_T u$ Einheiten an die auf ihr liegenden Kunden geliefert werden.
+	\item Die Fabrikkapazitäten ($l$) werden eingehalten. Alle bei eine Fabrik $f$ beginnenden Touren ($\allTours_f$) können zusammen höchstens so viele Einheiten ausliefern, wie die Fabrikkapazität $l(f)$ zulässt.
+	\item Die Bedarfe der Kunden ($d$) werden erfüllt. Dies ist der Fall, wenn alle Touren, auf denen ein Kunde $v$ liegt, zusammen mindestens so viel an ihn liefern, wie sein Bedarf $d(v)$ ist.
+\end{enumerate}
+
+\begin{beob}
+	Die Menge aller denkbaren Touren $\allTours$ wächst exponentiell in der Zahl der Kunden der $\CLRHFC$-Instanz. Dementsprechend schnell steigt auch die Zahl der Variablen und der Nebenbedingungen an, sodass das Problem nur für sehr kleine Eingabeinstanzen exakt gelöst werden kann.
+\end{beob}
+
+
 	\subsection{Lösungsansätze}
 	
-	Um überhaupt zulässige Lösungen für $\CLRHFC$ zu finden, muss der bestehende Algorithmus an wenigstens zwei Stellen angepasst werden: Beim Erstellen der Touren muss nun zusätzlich darauf geachtet werden, dass die Kapazität der ausgewählten Fabrik nicht überschritten wird. Des Weiteren muss gewährleistet sein, dass überhaupt immer offene Fabriken mit freier Kapazität verfügbar sind.
+	Um überhaupt zulässige Lösungen für $\CLRHFC$ zu finden, muss der bestehende Algorithmus an wenigstens zwei Stellen angepasst werden: Beim Erstellen der Touren muss nun zusätzlich darauf geachtet werden, dass die Kapazität der ausgewählten Fabrik nicht überschritten wird. Und allgemein muss immer gewährleistet sein, dass überhaupt offene Fabriken mit freier Kapazität verfügbar sind.
 	
 	Ersteres lässt sich sicherstellen, indem Touren gegebenenfalls noch weiter in Teiltouren aufgespalten werden, die jeweils klein genug sind, um von einer einzelnen offenen Fabrik vollständig beliefert zu werden.
 	
-	Für Letzteres gibt es zwei naheliegende Ansätze: Entweder man passt die $\ULF$- und/oder $\MST$-Phase so an, dass bereits hier die Fabrikkapazitäten berücksichtigt und dementsprechend viele Fabriken geöffnet werden. Oder man erlaubt dem Algorithmus noch in der Large-Demand- bzw. Merge-Phase bei Bedarf zusätzliche Fabriken zu eröffnen. 
+	Für Letzteres gibt es zwei naheliegende Ansätze: Entweder man passt die $\ULF$- und/oder $\MST$-Phase so an, dass bereits hier die Fabrikkapazitäten berücksichtigt und dementsprechend viele Fabriken geöffnet werden. Oder man erlaubt dem Algorithmus zusätzlich noch in der Large-Demand- bzw. Merge-Phase bei Bedarf weiter Fabriken zu eröffnen. 
 	
 	Der erste Ansatz ließe sich beispielsweise dadurch verwirklichen, dass statt einer $\ULF$-Instanz eine Instanz des \emph{nonuniform Capacitated Facility Location Problem}s erstellt und (approximativ) gelöst wird. Ein entsprechender auf lokaler Suche basierender Approximationsalgorithmus wird in \cite{Pal01facilitylocation} beschrieben. Alternativ (oder auch zusätzlich) könnte man versuchen beim Erstellen des Spannbaumes die Fabrikkapazitäten zu berücksichtigen. Dies hätte möglicherweise den Vorteil \todo{Add Vorteil}. Allerdings ist nicht klar, wie eine entsprechende Anpassung dieser Phase aussehen könnte.
 	
 	Der zweite Ansatz - neue Fabriken bei Bedarf eröffnen - ist dagegen deutlich leichter zu implementieren und ist daher auch der, der in diesem Programmierprojekt weiterverfolgt wurde. Er hat allerdings den Nachteil, dass dadurch der Zusammenhang zwischen den Kosten der in $\ULF$- und $\MST$-Phase gefundenen Lösungen und denen der letztendlich bestimmten Lösung der $\CLRHFC$-Instanz verloren gehen. \todo{siehe \cref{sec:Analyse}}
 
-	\subsection{Algorithmus}
+	\subsection{Der Algorithmus und seine Implementierung}
 	
+\todo[inline]{Allgemeines zur Implementierungsphilosophie (Vererbung)}		
 \todo[inline]{Beschreibung des angepassten Algorithmus}
 
-	\subsubsection{Algorithmus 1}
-	
-	\subsubsection{Algorithmus 2}
-	
+	\subsubsection{Toursplitting}
 
-	\subsection{Implementierungen}
+	\subsubsection{Greedy Fabrikeröffnung}
+	
+	\subsubsection{Fabrikeröffnung durch wiederholtes $\ULF$/$\MST$}
 	
 	\subsubsection{Zulässigkeitsprüfung}
 	
@@ -341,6 +374,10 @@ Es gibt auch Varianten von $\CLR$ mit \emph{weichen Fabrikkapazitäten}.
 	\subsection{Analyse der Algorithmen}\label{sec:Analyse}
 	
 	\subsubsection{Theoretische Betrachtungen}
+	
+	In \cite{AAfCLR} werden zwei untere Schranken für die Kosten der optimalen $\CLR$-Lösung gezeigt: Die Kosten der optimalen Lösungen der im Algorithmus verwendeten $\ULF$-Instanz sowie die der $\MST$-Instanz. Da jede Lösung einer $\CLRHFC$-Instanz insbesondere auch eine zulässige Lösung der zugrunde liegenden $\CLR$-Instanz sind, gelten diese Schranken weiterhin.
+	
+	
 
 		\todo[inline]{Untere Schranken}
 		
@@ -348,33 +385,11 @@ Es gibt auch Varianten von $\CLR$ mit \emph{weichen Fabrikkapazitäten}.
 		
 	\subsubsection{Heuristische Beurteilung}
 	
-	$\CLRHFC$ kann wie folgt als Mixed Integer Program (MIP) beschrieben werden:
+	 Schon für nur \todo{7?} Kunden und \todo{5?} Fabriken besteht das erzeugte MIP aus \todo{Zahlen einfügen} Variablen und Nebenbedingungen.
+
+	Um das MIP zumindest ein wenig kleiner zu halten, wird bei der Generierung des MIP nicht jede mögliche Tour betrachtet, sondern zu jeder Menge von Kunden und jeder Startfabrik eine jeweils optimale Tour. Zur Lösung des entsprechenden TSPs wird ein sehr einfacher Branch-and-Bound-Algorithmus verwendet. 
 	
-	\begin{center}
-		minimiere
-		\begin{align*}\sum_{f \in \FacilitySet} o_f \phi(f) + \sum_{T \in \allTours} y_T c(T)\end{align*}
-		unter den Nebenbedingungen:
-		\begin{align}	\sum_{v \in T\backslash\FacilitySet} x_{vT} \leq u y_T 								&,\quad T \in \allTours 						\\
-						\sum_{T \in \allTours_f} \sum_{v \in T\backslash\FacilitySet} x_{vT} \leq o_f l(f)	&,\quad f \in \FacilitySet						\\
-						\sum_{T \in \allTours, v \in T} x_{vT} \geq d(v)									&,\quad v \in \ClientSet					
-		\end{align}
-		wobei
-		\begin{align*}o_f \in \{0,1\},\quad y_T \in \IN_0, \quad x_{vT} \geq 0\end{align*}
-	\end{center}
-
-	Dabei gibt es 
-	\begin{itemize}
-		\item für jede Fabrik eine Variable $o_f$, welche bestimmt, ob die entsprechende Fabrik geöffnet ($1$) ist oder nicht ($0$),
-		\item sowie für jede mögliche Tour $T$ eine Variabel $y_T$, welche bestimmt, wie oft die entsprechende Tour genutzt wird,
-		\item und für jeden auf $T$ liegenden Kunden $v$ eine Variable $x_{vT}$, welche besagt, wie viele Einheiten durch Tour $T$ insgesamt an den Kunden $v$ geliefert werden.
-	\end{itemize}
-
-	Die Nebenbedingungen bekommen damit die folgende Bedeutung:
-	\begin{enumerate}\renewcommand{\theenumi}{\arabic{enumi}}
-		\item Die Fahrzeugkapazität ($u$) wird eingehalten. D.h. wird eine Tour $y_T$-mal genutzt, so können durch sie höchstens $y_T u$ Einheiten an die auf ihr liegenden Kunden geliefert werden.
-		\item Die Fabrikkapazitäten ($l$) werden eingehalten. Alle bei eine Fabrik $f$ beginnenden Touren ($\allTours_f$) können zusammen höchstens so viele Einheiten ausliefern, wie die Fabrikkapazität $l(f)$ zulässt.
-		\item Die Bedarfe der Kunden ($d$) werden erfüllt. Dies ist der Fall, wenn alle Touren, auf denen ein Kunde $v$ liegt, zusammen mindestens so viel an ihn liefern, wie sein Bedarf $d(v)$ ist.
-	\end{enumerate}
+	
 
 
 	\subsection{Ausblick}
