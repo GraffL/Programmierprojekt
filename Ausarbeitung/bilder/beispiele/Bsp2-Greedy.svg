@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="99px"
+   height="99px"
+   version="1.1"
+   id="svg2"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="Bsp2-Greedy.svg">
+  <metadata
+     id="metadata38">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs36" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1280"
+     inkscape:window-height="657"
+     id="namedview34"
+     showgrid="false"
+     inkscape:zoom="4.7676768"
+     inkscape:cx="30.700249"
+     inkscape:cy="52.369861"
+     inkscape:window-x="-8"
+     inkscape:window-y="544"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg2"
+     inkscape:snap-bbox="true"
+     inkscape:bbox-paths="true"
+     inkscape:bbox-nodes="true"
+     inkscape:snap-bbox-edge-midpoints="true"
+     inkscape:snap-bbox-midpoints="true" />
+  <polygon
+     points="0,99 99,99 99,0 0,0 "
+     fill="none"
+     stroke-width="0.396"
+     stroke="rgb(0,0,0)"
+     id="polygon4" />
+  <circle
+     cx="10"
+     cy="89"
+     r="5.58548"
+     fill="rgb(173,216,230)"
+     stroke-width="0.198"
+     stroke="rgb(0,0,0)"
+     id="circle6" />
+  <circle
+     cx="10"
+     cy="9"
+     r="5.58548"
+     fill="rgb(173,216,230)"
+     stroke-width="0.198"
+     stroke="rgb(0,0,0)"
+     id="circle8" />
+  <circle
+     cx="90"
+     cy="89"
+     r="5.58548"
+     fill="rgb(173,216,230)"
+     stroke-width="0.198"
+     stroke="rgb(0,0,0)"
+     id="circle10" />
+  <circle
+     cx="90"
+     cy="9"
+     r="5.58548"
+     fill="rgb(173,216,230)"
+     stroke-width="0.198"
+     stroke="rgb(0,0,0)"
+     id="circle12" />
+  <rect
+     x="36.4998"
+     y="45.4998"
+     width="7.00036"
+     height="7.00036"
+     fill="rgb(2,2,2)"
+     stroke-width="0.198"
+     stroke="rgb(0,0,0)"
+     id="rect14" />
+  <text
+     x="36.71711"
+     y="44.169407"
+     font-size="1.98"
+     id="text16"
+     style="font-size:5.26230669px;font-family:Verdana;fill:#000000">99</text>
+  <rect
+     x="48.9315"
+     y="37.9315"
+     width="22.1371"
+     height="22.1371"
+     id="rect18"
+     stroke-width="0.198"
+     stroke="rgb(0,0,0)"
+     fill="rgb(0,0,0)" />
+  <text
+     x="55.267467"
+     y="36.931141"
+     font-size="1.98"
+     id="text20"
+     style="font-size:5.22058678px;font-family:Verdana;fill:#000000">100</text>
+  <line
+     x1="76.5"
+     y1="4.5"
+     x2="94.5"
+     y2="4.5"
+     stroke-width="0.792"
+     stroke="rgb(0,0,0)"
+     id="line22" />
+  <line
+     x1="76.5"
+     y1="2.7"
+     x2="76.5"
+     y2="6.3"
+     stroke-width="0.396"
+     stroke="rgb(0,0,0)"
+     id="line24" />
+  <line
+     x1="94.5"
+     y1="2.7"
+     x2="94.5"
+     y2="6.3"
+     stroke-width="0.396"
+     stroke="rgb(0,0,0)"
+     id="line26" />
+  <text
+     x="82.823013"
+     y="3.5633583"
+     font-size="1.98"
+     id="text28"
+     style="font-size:4.18711281px;font-family:Verdana;fill:#000000">18</text>
+  <circle
+     cx="54.3327"
+     cy="4.5"
+     r="8.83365"
+     fill="none"
+     stroke-width="0.396"
+     stroke="rgb(0,0,0)"
+     id="circle30" />
+  <text
+     x="49.503483"
+     y="5.6366711"
+     font-size="1.98"
+     id="text32"
+     style="font-size:4.69735384px;font-family:Verdana;fill:#000000">u=5</text>
+  <line
+     style="stroke:#80ed12;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none"
+     x1="39.876362"
+     y1="48.845436"
+     x2="9.8763599"
+     y2="8.8454351"
+     id="line4" />
+  <line
+     style="stroke:#80ed12;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none"
+     x1="39.876362"
+     y1="48.845436"
+     x2="9.8763599"
+     y2="8.8454351"
+     id="line6" />
+  <line
+     style="stroke:#ed127f;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none"
+     x1="59.876362"
+     y1="48.845436"
+     x2="89.876358"
+     y2="8.8454351"
+     id="line8" />
+  <line
+     style="stroke:#ed127f;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none"
+     x1="89.876358"
+     y1="8.8454351"
+     x2="9.8763599"
+     y2="8.8454351"
+     id="line10" />
+  <line
+     style="stroke:#ed127f;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none"
+     x1="59.876362"
+     y1="48.845436"
+     x2="9.8763599"
+     y2="8.8454351"
+     id="line12" />
+  <line
+     style="stroke:#127fed;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none"
+     x1="59.876362"
+     y1="48.845436"
+     x2="89.876358"
+     y2="88.845436"
+     id="line14" />
+  <line
+     style="stroke:#127fed;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none"
+     x1="89.876358"
+     y1="88.845436"
+     x2="9.8763599"
+     y2="88.845436"
+     id="line16" />
+  <line
+     style="stroke:#127fed;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none"
+     x1="59.876362"
+     y1="48.845436"
+     x2="9.8763599"
+     y2="88.845436"
+     id="line18" />
+</svg>

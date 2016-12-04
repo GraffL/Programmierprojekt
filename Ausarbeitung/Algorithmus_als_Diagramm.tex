@@ -23,38 +23,38 @@
 \node [below of=input] (under-input) {};
 \node [Image, above of=input, node distance=6em] (input-img) {\includegraphics[width=8em]{bilder/instance.pdf}};
 
-% ULF-Instanz:
-\node [Box, left of=under-input, text width=14em, node distance=8em] (ULF) 
-	{\textbf{ULF-Instanz:} \\ $((\ClientSet\cup\FacilitySet,E),\tilde{c},\phi,d)$ \\
+% UFL-Instanz:
+\node [Box, left of=under-input, text width=15em, node distance=8.5em] (UFL) 
+	{\textbf{UFL-Instanz:} \\ $((\ClientSet\cup\FacilitySet,E),\tilde{c},\phi,d)$ \\
 	wobei $\tilde{c}:E \to \IR_{\geq 0}: e \mapsto \frac{2}{u}c(e)$};
-\node [Text, left of=ULF, text width=12em, node distance=17em] (ULF-lower-bound) {$\leadsto$ Untere Schranke: $\OPT(\CLR) \geq \OPT(\ULF)$};
-\node [Alg, below of=ULF, text width=14em] (ULF-solving) {löse approximativ (mit Greedy)};
-\node [Image, left of=ULF-solving, node distance=16.5em] (ULF-img) {\includegraphics[width=5em]{bilder/ULF.pdf}};
+\node [Text, left of=UFL, text width=12em, node distance=17em] (UFL-lower-bound) {$\leadsto$ Untere Schranke: $\OPT(\CLR) \geq \OPT(\UFL)$};
+\node [Alg, below of=UFL, text width=15em] (UFL-solving) {löse approximativ (mit Greedy)};
+\node [Image, left of=UFL-solving, node distance=16.5em] (UFL-img) {\includegraphics[width=5em]{bilder/UFL.pdf}};
 
 % MST-Instanz:
-\node [Box, right of=under-input, text width=14em, node distance=8em] (MST)
+\node [Box, right of=under-input, text width=15em, node distance=8.5em] (MST)
 	{\textbf{MST-Instanz:} \\ $((\ClientSet\cup\FacilitySet\cup\{r\},E^\prime),c^\prime)$ \\
 	$E^\prime := E \cup \{\{r,f\}\mid f\in\FacilitySet\}$ \\
 	$c^\prime(f,v) := c(f,v) + \frac{1}{2}\phi(f),$ \\
 	$c^\prime(r,f) := 0, c^\prime(v,w):=c(c,w)$};
 \node [Text, right of=MST, text width=12em, node distance=17em] (MST-lower-bound) {$\leadsto$ Untere Schranke: $\OPT(\CLR) \geq \OPT(\MST)$};
-\node [Alg, below of=MST, text width=14em] (MST-solving) {löse exakt $\leadsto$ Spannbaum $B$};
+\node [Alg, below of=MST, text width=15em] (MST-solving) {löse exakt $\leadsto$ Spannbaum $B$};
 \node [Image, right of=MST-solving, node distance=17em] (MST-img) {\includegraphics[width=5em]{bilder/MST.pdf}};
 
 % MERGE-Phase:
 \node [Text, below of=under-input, node distance=8em] (merge) {\textbf{Merge-Phase:}};
 
-\node [Alg, below of=merge, node distance=1.5em, text width=30em] (m-facilities) {
+\node [Alg, below of=merge, node distance=1.5em, text width=32em] (m-facilities) {
 		\begin{minipage}{30em}\begin{algorithmic}
-		\State Eröffne in $\ULF$ oder $\MST$ verwendete Fabriken
+		\State Eröffne in $\UFL$ oder $\MST$ verwendete Fabriken
 		\end{algorithmic}\end{minipage}
 	};
 \node [Text, left of=m-facilities, node distance=25em, text width=15em] () 
-	{Kosten beschränkt durch die entsprechenden Eröffnungskosten in $\ULF$ und $\MST$};
+	{Kosten beschränkt durch die entsprechenden Eröffnungskosten in $\UFL$ und $\MST$};
 
 % Große Kunden
 \node [Alg, below of=m-facilities, node distance=4em] (m-big-clients) {
-		\begin{minipage}{30em}\begin{algorithmic}
+		\begin{minipage}{32em}\begin{algorithmic}
 		\For{Kunden $v$ mit $d(v)\geq u$}
 			\State Verbinde $v$ durch $\ceil{\frac{d(v)}{u}}$ Touren mit nächster offener Fabrik
 		\EndFor
@@ -65,11 +65,11 @@
 	\includegraphics[width=5em]{bilder/largeDemand2.pdf}
 };
 \node [Text, left of=m-big-clients, node distance=25em, text width=15em] () 
-	{Kosten beschränkt durch $2\times$ den entsprechenden Verbindungskosten in $\ULF$};
+	{Kosten beschränkt durch $2\times$ den entsprechenden Verbindungskosten in $\UFL$};
 
 % Kleine Kunden
 \node [Alg, below of=m-big-clients, node distance=5em] (m-small-clients) {
-		\begin{minipage}{30em}\begin{algorithmic}\algtext*{EndFor}
+		\begin{minipage}{32em}\begin{algorithmic}\algtext*{EndFor}
 		\For{durch $\MST$ eröffnete Fabrik $f$}
 		\State Betrachte $B$ als gerichteten Baum mit Wurzel $r$
 		\State Für Knoten $v$ ist $B_v$ der Teilbaum mit Wurzel $v$
@@ -79,12 +79,14 @@
 
 % Relieve-Schritte
 \node [Alg, below of=m-small-clients, node distance=7em] (m-relieve) {
-		\begin{minipage}{30em}\begin{algorithmic}\algtext*{For}\algtext*{EndFor}
+		\begin{minipage}{32em}\begin{algorithmic}\algtext*{For}\algtext*{EndFor}
 			\For
 			\While{$d(B_f) > 0$}
 			\State Sei $v \in B_f: d(B_v) > u$ und $d(B_w) \leq u$ f.a. Kinder $w$ von $v$
-			\State Partitioniere die Menge der Unterbäume von $B_v$ in Mengen mit Bedarf zw. $u/2$ und $u$
-			\State Wandle diese zu Touren um und verbinde sie mit nächster offener Fabrik
+			\State Partitioniere die Menge der Unterbäume von $B_v$ 
+			\State \quad in Mengen mit Bedarf zw. $u/2$ und $u$
+			\State Wandle diese zu Touren um und verbinde sie jeweils
+			\State \quad mit nächster offener Fabrik
 			\EndWhile
 			\EndFor
 			\end{algorithmic}\end{minipage}
@@ -95,13 +97,14 @@
 		\includegraphics[width=5em]{bilder/relieveTour3.pdf}
 	};
 \node [Text, left of=m-relieve, node distance=25em, text width=15em] () 
-	{Kosten beschränkt durch $2\times$ die Kantenkosten im $\MST$ und $2\times$ den Verbindungskosten aller Knoten der Tour in $\ULF$};
+	{Kosten beschränkt durch $2\times$ die Kantenkosten im $\MST$ und $2\times$ den Verbindungskosten aller Knoten der Tour in $\UFL$};
 
 % Rest
 \node [Alg, below of=m-relieve, node distance=7em] (m-remaining) {
-		\begin{minipage}{30em}\begin{algorithmic}\algtext*{For}
+		\begin{minipage}{32em}\begin{algorithmic}\algtext*{For}
 		\For
-		\State Übrige Kunden in $B_f$ (mit Gesamtbedarf $\leq u$) zu Tour verbinden und mit nächster offener Fabrik verbinden
+		\State Übrige Kunden in $B_f$ (mit Gesamtbedarf $\leq u$) zu Tour verbinden 
+		\State und mit nächster offener Fabrik verbinden
 		\EndFor
 		\end{algorithmic}\end{minipage}
 	};
@@ -120,12 +123,12 @@
 
 % PATHS:
 
-\path [arrow] (input.south) -- (ULF.north);    
+\path [arrow] (input.south) -- (UFL.north);    
 \path [arrow] (input.south) -- (MST.north); 
 
-\path [arrow] (ULF) -- (ULF-solving.north);
+\path [arrow] (UFL) -- (UFL-solving.north);
 \path [arrow] (MST) -- (MST-solving.north);
-\path [arrow] (ULF-solving.south) -- (merge.north);
+\path [arrow] (UFL-solving.south) -- (merge.north);
 \path [arrow] (MST-solving.south) -- (merge.north);
 
 \path [line] (m-facilities) -- (m-big-clients);
