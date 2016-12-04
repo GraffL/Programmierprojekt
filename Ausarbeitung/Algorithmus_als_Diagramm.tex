@@ -19,7 +19,7 @@
 \begin{tikzpicture}[node distance = 5em, auto]
 
 % EINGABE:
-\node [Box, text width=20em] (input) {\textbf{Input:} \\ CLR-Instanz $((\ClientSet\cup\FacilitySet,E),c,\phi,d,u)$};
+\node [Box, text width=20em] (input) {\textbf{Input:} \\ \CLR-Instanz $((\ClientSet\cup\FacilitySet,E),c,\phi,d,u)$};
 \node [below of=input] (under-input) {};
 \node [Image, above of=input, node distance=6em] (input-img) {\includegraphics[width=8em]{bilder/instance.pdf}};
 
@@ -27,17 +27,17 @@
 \node [Box, left of=under-input, text width=15em, node distance=8.5em] (UFL) 
 	{\textbf{UFL-Instanz:} \\ $((\ClientSet\cup\FacilitySet,E),\tilde{c},\phi,d)$ \\
 	wobei $\tilde{c}:E \to \IR_{\geq 0}: e \mapsto \frac{2}{u}c(e)$};
-\node [Text, left of=UFL, text width=12em, node distance=17em] (UFL-lower-bound) {$\leadsto$ Untere Schranke: $\OPT(\CLR) \geq \OPT(\UFL)$};
+\node [Text, left of=UFL, text width=12em, node distance=17em] (UFL-lower-bound) {$\leadsto$ Untere Schranke: $\text{\OPT}(\text{\CLR}) \geq \text{\OPT}(\text{\UFL})$};
 \node [Alg, below of=UFL, text width=15em] (UFL-solving) {löse approximativ (mit Greedy)};
 \node [Image, left of=UFL-solving, node distance=16.5em] (UFL-img) {\includegraphics[width=5em]{bilder/UFL.pdf}};
 
 % MST-Instanz:
 \node [Box, right of=under-input, text width=15em, node distance=8.5em] (MST)
-	{\textbf{MST-Instanz:} \\ $((\ClientSet\cup\FacilitySet\cup\{r\},E^\prime),c^\prime)$ \\
+	{\textbf{\MST-Instanz:} \\ $((\ClientSet\cup\FacilitySet\cup\{r\},E^\prime),c^\prime)$ \\
 	$E^\prime := E \cup \{\{r,f\}\mid f\in\FacilitySet\}$ \\
 	$c^\prime(f,v) := c(f,v) + \frac{1}{2}\phi(f),$ \\
 	$c^\prime(r,f) := 0, c^\prime(v,w):=c(c,w)$};
-\node [Text, right of=MST, text width=12em, node distance=17em] (MST-lower-bound) {$\leadsto$ Untere Schranke: $\OPT(\CLR) \geq \OPT(\MST)$};
+\node [Text, right of=MST, text width=12em, node distance=17em] (MST-lower-bound) {$\leadsto$ Untere Schranke: $\text{\OPT}(\text{\CLR}) \geq \text{\OPT}(\text{\MST})$};
 \node [Alg, below of=MST, text width=15em] (MST-solving) {löse exakt $\leadsto$ Spannbaum $B$};
 \node [Image, right of=MST-solving, node distance=17em] (MST-img) {\includegraphics[width=5em]{bilder/MST.pdf}};
 
@@ -46,11 +46,11 @@
 
 \node [Alg, below of=merge, node distance=1.5em, text width=32em] (m-facilities) {
 		\begin{minipage}{30em}\begin{algorithmic}
-		\State Eröffne in $\UFL$ oder $\MST$ verwendete Fabriken
+		\State Eröffne in \UFL{} oder \MST{} verwendete Fabriken
 		\end{algorithmic}\end{minipage}
 	};
 \node [Text, left of=m-facilities, node distance=25em, text width=15em] () 
-	{Kosten beschränkt durch die entsprechenden Eröffnungskosten in $\UFL$ und $\MST$};
+	{Kosten beschränkt durch die entsprechenden Eröffnungskosten in \UFL{} und \MST{}};
 
 % Große Kunden
 \node [Alg, below of=m-facilities, node distance=4em] (m-big-clients) {
@@ -65,12 +65,12 @@
 	\includegraphics[width=5em]{bilder/largeDemand2.pdf}
 };
 \node [Text, left of=m-big-clients, node distance=25em, text width=15em] () 
-	{Kosten beschränkt durch $2\times$ den entsprechenden Verbindungskosten in $\UFL$};
+	{Kosten beschränkt durch $2\times$ den entsprechenden Verbindungskosten in \UFL};
 
 % Kleine Kunden
 \node [Alg, below of=m-big-clients, node distance=5em] (m-small-clients) {
 		\begin{minipage}{32em}\begin{algorithmic}\algtext*{EndFor}
-		\For{durch $\MST$ eröffnete Fabrik $f$}
+		\For{durch \MST{} eröffnete Fabrik $f$}
 		\State Betrachte $B$ als gerichteten Baum mit Wurzel $r$
 		\State Für Knoten $v$ ist $B_v$ der Teilbaum mit Wurzel $v$
 		\EndFor
@@ -97,7 +97,7 @@
 		\includegraphics[width=5em]{bilder/relieveTour3.pdf}
 	};
 \node [Text, left of=m-relieve, node distance=25em, text width=15em] () 
-	{Kosten beschränkt durch $2\times$ die Kantenkosten im $\MST$ und $2\times$ den Verbindungskosten aller Knoten der Tour in $\UFL$};
+	{Kosten beschränkt durch $2\times$ die Kantenkosten im \MST{} und $2\times$ den Verbindungskosten aller Knoten der Tour in \UFL};
 
 % Rest
 \node [Alg, below of=m-relieve, node distance=7em] (m-remaining) {
@@ -113,7 +113,7 @@
 	\includegraphics[width=5em]{bilder/remainingTour2.pdf}
 };
 \node [Text, left of=m-remaining, node distance=25em, text width=15em] () 
-	{Kosten beschränkt durch $2\times$ den Verbindungskosten in $\MST$};
+	{Kosten beschränkt durch $2\times$ den Verbindungskosten in \MST};
 
 
 % AUSGABE:

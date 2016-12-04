@@ -261,7 +261,7 @@ Im ersten Teil des Programmierprojektes ging es darum den Ablauf sowie das Ergeb
 	\fbox{\includegraphics[width=.19\textwidth]{bilder/demo_singleTour.pdf}}
 	\fbox{\includegraphics[width=.19\textwidth]{bilder/demo_allTours.pdf}}
 	
-	\caption{Ausgabe der Klasse \lstinline|CLR_Drawing|: Die Instanz selbst, die Lösung der UFL-Instanz, die Lösung der MST-Instanz, Touren aus der Large-Demand-Phase, ein Relieve-Tree, eine daraus entstandene Tour, eine Remaining-Tour, eine einzelne Tour, alle Touren}
+	\caption{Ausgaben der Klasse \lstinline|CLR_Drawing|: Die Instanz selbst, die Lösung der UFL-Instanz, die Lösung der MST-Instanz, Touren aus der Large-Demand-Phase, ein Relieve-Tree, eine daraus entstandene Tour, eine Remaining-Tour, eine einzelne Tour, alle Touren}
 \end{figure}
 
 Die Ausgabe besteht aus SVG-Dateien, die mit Hilfe der \Cpp-Bibliothek simple-svg (\cite{simple-svg}) erstellt werden. Diese können dann beispielsweise von Hand übereinander gelegt werden, um ein bestimmtes Zwischenstadium des Algorithmus darzustellen, oder zu einer Animation zusammengesetzt werden, um den gesamten Ablauf des Algorithmus abzubilden.
@@ -592,9 +592,9 @@ public:
 			\item Fahrzeugkapazität $N(N+1)$
 		\end{itemize}
 		\begin{figure}[h]\centering
-		\includegraphics[width=.32\textwidth]{bilder/beispiele/bsp4-instance.pdf}
-		\includegraphics[width=.32\textwidth]{bilder/beispiele/bsp4-It.pdf}
-		\includegraphics[width=.32\textwidth]{bilder/beispiele/bsp4-OPT.pdf}
+		\includegraphics[width=.3\textwidth]{bilder/beispiele/bsp4-instance.pdf}
+		\includegraphics[width=.3\textwidth]{bilder/beispiele/bsp4-It.pdf}
+		\includegraphics[width=.3\textwidth]{bilder/beispiele/bsp4-OPT.pdf}
 		\caption{Die im Beweis von \Cref{satz:schlechteApproximationsguete} verwendete Instanz (für $N=8$), die vom iterativen Algorithmus berechnete und die optimale Lösung}\label{fig:bsp:schlechterApproximationsguete}
 		\end{figure}
 		Da der in der \MST-Phase gefundene Spannbaum nun für jeden Kunden eine einzelne Komponente hat, muss der Algorithmus (in beiden Varianten) für jeden Kunden eine eigene Tour erstellen. Im besten Falle verbindet er also jeden Kunden durch jeweils eine Tour der Länge $2$ mit der großen Fabrik in der Mitte. Dies führt zu Gesamtkosten von $2N$.
@@ -683,11 +683,18 @@ public:
 	\caption{Instanzen 20-39, jeweils mit 100 Kunden und 20 Fabriken}\label{tab3}
 	\end{figure}
 
-	Allgemein ist zu beobachten, dass die iterative Variante des Algorithmus fast immer die bessere Lösung findet. Der einzige Fall, in dem das Greedy-Verfahren eine (leicht) bessere Lösung findet ist Instanz 5. Die Kosten der iterativ gefunden Lösung liegen für die beiden kleineren Instanzgrößen fast immer weniger als $50\%$ über denen der Optimallösung (einzige Ausnahmen sind die Instanzen 14 ($70\%$) und 17 ($64\%$)).
+	Allgemein ist zu beobachten, dass die iterative Variante des Algorithmus fast immer die bessere Lösung findet. Der einzige Fall, in dem das Greedy-Verfahren eine (leicht) bessere Lösung findet ist Instanz 5 (\cref{fig:GreedyBesser}). Die Kosten der iterativ gefunden Lösung liegen für die beiden kleineren Instanzgrößen fast immer weniger als $50\%$ über denen der Optimallösung (einzige Ausnahmen sind die Instanzen 14 ($70\%$) und 17 ($64\%$)).
 	
 	Bei den Instanzen mit $100$ Kunden liegen die Kosten der vom iterativen Verfahren gefundenen Lösungen bis zu $150\%$ über denen der optimalen \UFL-Lösung. Es ist allerdings anzunehmen, dass diese die tatsächlichen Kosten der optimalen \CLRHFC-Lösung im allgemeinen deutlich unterschätzen (bei den kleineren Instanzen liegen die Kosten der optimalen \CLRHFC-Lösung meisten $\sim 50\%$ höher). 
 	
 	Festzustellen ist auch, dass sich eine geringe Gesamtfabrikkapazität für die Greedy-Strategie stärker negativ bemerkbar zu machen scheint als für die iterative Strategie. \todo{Erklärung hierfür?}
+	
+	\begin{figure}[h]
+		\includegraphics[width=.3\textwidth]{bilder/GreedyBesser-Greedy.pdf}
+		\includegraphics[width=.3\textwidth]{bilder/GreedyBesser-It.pdf}
+		\includegraphics[width=.3\textwidth]{bilder/GreedyBesser-OPT.pdf}
+		\caption{Die einzige Instanz, auf der die Greedy-Strategie die iterative schlägt \\ (Greedy-Lsg, iterative Lsg, optimale Lsg)}\label{fig:GreedyBesser}
+	\end{figure}
 
 \section*{Ausblick}
 	
