@@ -341,7 +341,7 @@ Das MIP sieht dann wie folgt aus:
 	
 	Für Letzteres gibt es zwei naheliegende Ansätze: Entweder man passt die \UFL- und/oder \MST-Phase so an, dass bereits hier die Fabrikkapazitäten berücksichtigt und dementsprechend viele Fabriken geöffnet werden. Oder man erlaubt dem Algorithmus zusätzlich noch in der Large-Demand- bzw. Merge-Phase bei Bedarf weiter Fabriken zu eröffnen. 
 	
-	Der erste Ansatz ließe sich beispielsweise dadurch verwirklichen, dass statt einer \UFL-Instanz eine Instanz des \emph{nonuniform Capacitated Facility Location Problem}s erstellt und (approximativ) gelöst wird. Ein entsprechender auf lokaler Suche basierender Approximationsalgorithmus wird in \cite{Pal01facilitylocation} beschrieben. Alternativ (oder auch zusätzlich) könnte man versuchen beim Erstellen des Spannbaumes die Fabrikkapazitäten zu berücksichtigen. Allerdings ist nicht klar, wie eine entsprechende Anpassung dieser Phase aussehen könnte. Allgemein hätte dieser Ansatz möglicherweise den Vorteil \todo{Add Vorteil}. 
+	Der erste Ansatz ließe sich beispielsweise dadurch verwirklichen, dass statt einer \UFL-Instanz eine Instanz des \emph{nonuniform Capacitated Facility Location Problem}s erstellt und (approximativ) gelöst wird. Ein entsprechender auf lokaler Suche basierender Approximationsalgorithmus wird in \cite{Pal01facilitylocation} beschrieben. Alternativ (oder auch zusätzlich) könnte man versuchen beim Erstellen des Spannbaumes die Fabrikkapazitäten zu berücksichtigen. Allerdings ist nicht klar, wie eine entsprechende Anpassung dieser Phase aussehen könnte.
 	
 	Der zweite Ansatz - neue Fabriken bei Bedarf eröffnen - ist dagegen deutlich leichter zu implementieren und ist daher auch der, der in diesem Programmierprojekt weiterverfolgt wurde. Er hat allerdings den Nachteil, dass dadurch der Zusammenhang zwischen den Kosten der in \UFL- und \MST-Phase gefundenen Lösungen und denen der letztendlich bestimmten Lösung der \CLRHFC-Instanz verloren gehen (siehe dazu \cref{sec:Analyse:theoretisch}).
 
@@ -698,9 +698,13 @@ public:
 
 \section*{Ausblick}
 	
-	\todo[inline]{Was könnte man verbessern? Welche Probleme gibt es dabei?}
+Wir haben nun also gesehen wie Large Demand- und Merge-Phase des $\CLR$-Algorithmus so angepasst werden können, dass dieser auch für \CLRHFC-Instanzen zulässige Lösungen findet. Ferner hat die heuristische Betrachtung gezeigt, dass dabei zumindest für verhältnismäßig kleine Instanzen\todo{evtl. weglassen, wenn auch größere Instanzen geprüft wurden} in der euklidischen Ebene bereits meist eine akzeptable Approximationsgüte erreicht wird. Gleichzeitig zeigt aber \Cref{satz:schlechteApproximationsguete}, dass es - ebenfalls schon in der euklidischen Ebene - auch Instanzen gibt, auf denen die Approximation beliebig schlecht wird.
 	
-	
+Eine naheliegender nächster Schritt auf der Suche nach einem guten Approximationsalgorithmus wäre nun vielleicht auch die \UFL- und \MST-Phasen anzupassen, sodass die Fabrikkapazitäten bereits dort eine Rolle spielen. Zumindest für den \UFL-Teil sind hierzu auch passende Approximationsalgorithmen bekannt (z.B. \cite{Pal01facilitylocation}), allerdings zeigt etwa das in \cref{fig:bsp:schlechterMST} gezeigte Beispiel, dass dies allein vermutlich nicht ausreichen wird, da auch das Finden eines guten Spannbaums eine zentrale Rolle spielt.
+
+Zudem ergibt sich durch das Einführen von Fabrikkapazitäten noch ein neues Problem im Zusammenspiel der \UFL- und \MST-Lösung (selbst wenn die Kapazitäten in diesen berücksichtigt werden): Da ein Kunde in den beiden Lösungen im Allgemeinen mit verschiedenen Fabriken verbunden sein darf, kann es passieren, dass Kunden sich in der Merge-Phase gegenseitig Fabriken \glqq wegnehmen\grqq. 
+
+Denn: Nur weil ein Kunde bspw. in der \MST-Lösung mit einer nahen Fabrik verbunden ist (was dann später zur Abschätzung der tatsächlichen Anbindungskosten dienen soll), ist noch nicht sicher gestellt, dass diese Anbindung auch noch verfügbar ist, wenn dieser Kunde in der Merge-Phase tatsächlich an die Reihe kommt. Es kann vielmehr auch passieren, dass die entsprechende Fabrik zu diesem Zeitpunkt bereits durch andere Kunden voll ausgelastet ist. Es ist anzunehmen, dass derartige Effekte die Beschränkung der Kosten der letztendlich gefundenen Lösung im Allgemeinen deutlich erschwert und evtl. macht dies noch weitere Anpassungen der Merge-Phase nötig.
 
 \newpage	
 \listoftodos
