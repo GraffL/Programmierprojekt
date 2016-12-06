@@ -43,6 +43,15 @@
 \newcommand{\LineFor}[2]{\State\algorithmicfor\ {#1}\ \algorithmicdo\ {#2} \algorithmicend\ \algorithmicfor}
 
 \usepackage{listings}			% Anzeige von Sourcecode
+% Umlaute in Code:
+\lstset{literate=%
+	{Ö}{{\"O}}1
+	{Ä}{{\"A}}1
+	{Ü}{{\"U}}1
+	{ü}{{\"u}}1
+	{ä}{{\"a}}1
+	{ö}{{\"o}}1
+}
 
 
 \setlength\parskip{\medskipamount}
@@ -187,6 +196,8 @@ Aufbauend auf diesem existierenden Programm wurden im Rahmen des hier beschriebe
 In der folgenden Ausarbeitung wird zunächst kurz der bestehende Algorithmus für \CLR{} skizziert und dann die Implementierung der beiden neuen Bestandteile beschrieben. Schließlich wird der erweiterte Algorithmus auf einigen Instanzen getestet.
 
 
+\newpage
+
 \section{Capacitated Location Routing (\CLR)}
 
 	\subsection{Problemdefinition}
@@ -247,7 +258,11 @@ Der in \cite{AAfCLR} beschriebene $4,38$-approximative\footnote{Die diesem Progr
 
 \subsection{Visualisierung des Algorithmus}
 
-Im ersten Teil des Programmierprojektes ging es darum den Ablauf sowie das Ergebnis des oben beschriebenen Algorithmus zu visualisieren. Dazu wurde die existierende Implementierung des Algorithmus um eine Klasse \lstinline|CLR_Drawing| erweitert. Diese wird zu Beginn des Algorithmus mit der zu lösenden Instanz initialisiert und kann dann an verschiedenen Stellen des Algorithmus aufgerufen werden, um einen Schnappschuss mit dem momentanen Stand zu erstellen. 
+Im ersten Teil des Programmierprojektes ging es darum den Ablauf sowie das Ergebnis des oben beschriebenen Algorithmus zu visualisieren. Dazu wurde die existierende Implementierung des Algorithmus um eine Klasse \lstinline|CLR_Drawing| erweitert. Diese bietet die Möglichkeit das Ergebnis sowie verschiedene Zwischenstadien des Algorithmus graphisch abzubilden. 
+
+Die Ausgabe besteht aus SVG-Dateien, die mit Hilfe der \Cpp-Bibliothek simple-svg (\cite{simple-svg}) erstellt werden. Diese können dann beispielsweise von Hand übereinander gelegt werden, um ein bestimmtes Zwischenstadium des Algorithmus darzustellen, oder zu einer Animation zusammengesetzt werden, um den gesamten Ablauf des Algorithmus abzubilden.
+
+Ein Beispiel für ersteres sind die Bilder in dieser Arbeit, ein Beispiel für Letzteres kann man auf \url{http://graffl.github.io/misc/drawings/drawings-steps.html} sehen.
 
 \begin{figure}[H]\centering\setlength{\fboxsep}{0pt}
 	\fbox{\includegraphics[width=.19\textwidth]{bilder/demo_instance.pdf}}
@@ -264,14 +279,63 @@ Im ersten Teil des Programmierprojektes ging es darum den Ablauf sowie das Ergeb
 	\caption{Ausgaben der Klasse \lstinline|CLR_Drawing|: Die Instanz selbst, die Lösung der UFL-Instanz, die Lösung der MST-Instanz, Touren aus der Large-Demand-Phase, ein Relieve-Tree, eine daraus entstandene Tour, eine Remaining-Tour, eine einzelne Tour, alle Touren}
 \end{figure}
 
-Die Ausgabe besteht aus SVG-Dateien, die mit Hilfe der \Cpp-Bibliothek simple-svg (\cite{simple-svg}) erstellt werden. Diese können dann beispielsweise von Hand übereinander gelegt werden, um ein bestimmtes Zwischenstadium des Algorithmus darzustellen, oder zu einer Animation zusammengesetzt werden, um den gesamten Ablauf des Algorithmus abzubilden.
+Die Klasse \lstinline|CLR-Drawing| ist als Singelton implementiert, wodurch zum einen sicher gestellt ist, dass immer nur eine Instanz dieser Klasse existiert, und zum anderen jede Funktion auf die Instanz zugreifen kann, ohne das diese jeweils explizit übergeben werden muss. 
 
-Ein Beispiel für ersteres sind die Bilder in dieser Arbeit, als Beispiel für Letztes \todo{Verweis auf Webseite/Anhang/...?}...
+Zu Beginn des Algorithmus muss die Klasse mit allen Daten der Instanz initialisiert werden (etwa indem die entsprechende Datei übergeben wird). Ab dann kann jederzeit im Laufe des Algorithmus eine der Zeichnen-Funktionen der Klasse aufgerufen werden, um eine SVG-Datei zu erzeugen, die den entsprechenden Zwischenschritt darstellt (bspw. die Lösung der \UFL-Instanz, das Ergebnis der Large Demand-Phase oder eine einzelne Tour).
 
-\todo[inline]{Klasse detaillierter beschreiben?}
+Die Namen der hierbei erzeugten Dateien sowie die Farben der verschiedenen Elemente sind momentan innerhalb der Klasse fest einprogrammiert. Lediglich bei der Funktion \lstinline|draw_tours()|, die ein Bild aller gefundenen Touren erzeugt, ist es bereits möglich zu entscheiden, ob alle Touren in einer einheitlichen Farbe (lila) dargestellt werden oder jede Tour eine andere Farbe bekommt, damit man die einzelnen Touren leichter unterscheiden kann.
 
-\todo[inline]{Verweis auf eigenständiges Programm zum Einlesen von Touren}
+Das Bild der Instanz stellt Kunden als Kreise und Fabriken als Quadrate dar. Die Fläche der geometrischen Formen ist dabei proportional zum jeweiligen Bedarf des Kunden bzw. der Kapazität der Fabrik (letzteres nur für echte \CLRHFC-Instanzen). Bei Fabriken entspricht zusätzlich die Schattierung des Quadrates der Höhe der Eröffnungskosten (je teurer, desto dunkler). Diese werden außerdem als kleine Zahl über der jeweiligen Fabrik angegeben. Schließlich wird noch am oberen rechten Rand des Bildes ein Maßstab für die Entfernungen und ein die Fahrzeugkapazität repräsentierender Kreis dargestellt.
 
+\begin{lstlisting}[caption=Die Klasse \lstinline|CLR_Drawing| (gekürzt)]
+class CLR_Drawing {
+private:
+CLR_Drawing() {...};
+
+public:
+static CLR_Drawing* get_instance() {
+	static CLR_Drawing instance;
+	return &instance;
+}
+
+// Verschiedene Möglichkeiten der Initialisierung:
+bool init(vector<vector<double> > c_pos, vector<vector<double> > 
+d_pos, vector<double> dems, vector<double> oCosts, double u);
+bool init(const char* fileName);
+bool init(const char* fileName, bool fac_cap_relevant);
+bool init();
+
+// Zeichnet die Instanz selbst (Kunden, Fabrikstandorte, Legende)
+void draw_instance();
+
+ served, svg::Color color);
+// Zeichnet Lösung der UFL-Instanz:
+void draw_UFL_solution(vector<bool> facOpen, vector<int> facForClient);
+// Zeichnet den in der MST-Phase gefundenen Spannbaum:
+void draw_tree(Tree tree);
+// Zeichnet eine einzelne tour in die übergebene SVG-Datei:
+void draw_tour(list<int> tour, svg::Color color, svg::Document* doc);
+void draw_tour(list<int> tour, svg::Color color, string filename);
+// Zeichnet das Ergebnis der Large Demand-Phase:
+void draw_largeDemandPhase(list<vector<int> > tours_for_drawing);
+// Zeichnet einen Relieve-Baum:
+void draw_relieve_tree(Tree tree, int root, vector<bool> served);
+// Zeichnet eine Relieve-Tour:
+void draw_relieve_tours(list<list<int> > tours);
+// Zeichnet eine Remaining-Tour:
+void draw_remaining_tour(list<int> tour);
+// Zeichnet alle bisher gefundenen Touren:
+void draw_current_tours(list<list<int> > tours);
+// Zeichnet alle übergebenen Touren
+// (monochrome=false -> jede Tour in eigener Farbe):
+void draw_tours(list<list<int> > tours, bool monochrome = true);
+};
+\end{lstlisting}
+
+Für sich genommen kann die Klasse \lstinline|CLR_Drawing| außerdem auch dazu verwendet werden, anderweitig gefundene Touren für bestimmte Instanzen zu zeichnen. Dies ist zum Beispiel hilfreich, wenn man eine mittels eines MIP-Solvers gefundene optimale Lösung zeichnen lassen möchte. Dazu wurde ein eigenes Programm \lstinline|DrawTours| angelegt, dem zwei Dateien (eine die Instanz beschreibende und eine für die Touren) übergeben werden können, und welches daraus entsprechende Bilder generiert.
+
+
+\newpage
 
 \section{\CLR{} with Hard Facility Capacities (\CLRHFC)}
 
@@ -374,7 +438,7 @@ Solution sol = s->solve();
 	\[\text{Wert}(f) :=  \frac{\min\{\tilde{l}(f), \tilde{d}(M)\}}{2 c(f,M)}\]
 	Dabei bezeichnet $c(f,M)$ den Abstand von $f$ zu dem nächstliegenden Kunden aus $M$. Der Wert einer Fabrik ist also umso höher je mehr nutzbare Kapazität sie hat und je näher an den zu versorgenden Kunden sie liegt (bzw. zumindest einem von diesen). Die Fabrik mit dem höchsten Wert wird schlussendlich ausgewählt.
 	
-	Hat keine der offenen Fabriken mehr übrige Kapazität, so entscheidet die Funktion \lstinline|findBestFacility| darüber, welche Fabrik nun zusätzlich eröffnet werden soll. Für diese Entscheidung wurden zwei verschiedene Ansätze implementiert, die in den folgenden beiden Abschnitten beschrieben werden.		
+	Hat keine der offenen Fabriken mehr übrige Kapazität, so entscheidet die Funktion \lstinline|findBestFacility| darüber, welche Fabrik nun zusätzlich eröffnet werden soll. Für diese Entscheidung wurden zwei verschiedene Ansätze (\glqq Greedy\grqq/\glqq iterativ\grqq) implementiert, die in den folgenden beiden Abschnitten beschrieben werden.		
 
 	\subsubsection{Greedy Fabrikeröffnung}
 	
@@ -541,7 +605,7 @@ public:
 		Die Laufzeit des Algorithmus ist (in beiden Varianten) weiterhin polynomiell. 
 	\end{beob}
 	
-	In \cite{AAfCLR} werden zwei untere Schranken für die Kosten der optimalen \CLR-Lösung gezeigt: Die Kosten der optimalen Lösungen der im Algorithmus verwendeten \UFL-Instanz sowie die der \MST-Instanz. Da jede Lösung einer \CLRHFC-Instanz insbesondere auch eine zulässige Lösung der zugrunde liegenden \CLR-Instanz ist, gelten diese Schranken weiterhin.
+	In \cite{AAfCLR} werden zwei untere Schranken für die Kosten der optimalen \CLR-Lösung gezeigt (Lemmas 1 und 2): Die Kosten der optimalen Lösungen der im Algorithmus verwendeten \UFL-Instanz sowie die der \MST-Instanz. Da jede Lösung einer \CLRHFC-Instanz insbesondere auch eine zulässige Lösung der zugrunde liegenden \CLR-Instanz ist, gelten diese Schranken weiterhin.
 	
 	Während jedoch im Fall der \CLR-Problem aus den beiden Werten zusammen auch eine obere Schranke für die Kosten der optimalen \CLR-Lösung bestimmt werden kann (auf diese Weise wird ja gerade die Approximationsgüte des Algorithmus bewiesen), ist dies für das \CLRHFC-Problem nicht mehr der Fall. Insbesondere können diese beiden unteren Schranken hier also beliebige weit von den Kosten der optimalen \CLRHFC-Lösung entfernt liegen.
 	
@@ -615,90 +679,117 @@ public:
 		\item 5 Kunden, 5 Fabriken, doppelt so viel Fabrikkapazität wie Kundenbedarf; zusätzlich wurden diese \CLRHFC-Instanzen mit SCIP exakt gelöst (Instanzen 0-9, \cref{tab1})
 		\item 10 Kunden, 5 Fabriken, doppelt so viel Fabrikkapazität wie Kundenbedarf; hier wurden mit SCIP untere und obere Schranken für die optimale Lösungen gefunden (Instanzen 10-19, \cref{tab2})
 		\item 100 Kunden, 20 Fabriken,  doppelt so viel Fabrikkapazität wie Kundenbedarf; hier werden die Lösungen jeweils mit den Kosten der \UFL-Instanz (untere Schranke) verglichen (Instanzen 20-29, \cref{tab3})
-		\item 100 Kunden, 20 Fabriken, $10\%$ mehr  Fabrikkapazität wie Kundenbedarf; auch hier werden die Lösungen jeweils mit den Kosten der \UFL-Instanz (untere Schranke) (Instanzen 30-39, \cref{tab3})
+		\item 100 Kunden, 20 Fabriken, $10\%$ mehr  Fabrikkapazität wie Kundenbedarf; auch hier werden die Lösungen jeweils mit den Kosten der \UFL-Instanz (untere Schranke) verglichen (Instanzen 30-39, \cref{tab3})
+		\item 1000 Kunden, 50 Fabriken, doppelt so viel  Fabrikkapazität wie Kundenbedarf, maximaler Bedarf 50, Eröffnungskosten zwischen 10 und 500 und Fahrzeugkapazität 20 (Instanzen 40-49, \cref{tab4})
 	\end{itemize}
-	Die optimalen Kosten der \UFL-Instanz wurden dabei jeweils eigens mit SCIP berechnet.
+	Die weiteren Parameter waren in den ersten 40 Instanzen: Fläche: 100, maximaler Bedarf 20, Eröffnungskosten zwischen 10 und 200 und Fahrzeugkapazität 10. Die optimalen Kosten der \UFL-Instanz wurden dabei jeweils eigens mit SCIP berechnet.
 	
-	\begin{figure}[h]\centering\small
+	\begin{figure}[H]\centering\small
 	\begin{tabu}{l||r|r||c|c|r|r||c|c|r|r||r}
 		\rowfont{\bfseries}
 		\#  & \UFL	& \MST	& \multicolumn{4}{c||}{Greedy}		& \multicolumn{4}{c||}{Iterativ}	& optimal	\\\hline\hline
-		0	&341,22	&123,02	&3	&7	&657,00	&1,34	&3	&7	&602,08	&1,23	&491,19	\\
+		0	&341,22	&123,02	&3	&7	&657	&1,34	&3	&7	&602,08	&1,23	&491,19	\\
 		1	&350,67	&126,97	&4	&8	&1146,82	&1,84	&4	&6	&745,58	&1,19	&624,43	\\
-		2	&379,63	&123,00	&2	&6	&505,00	&1,00	&2	&6	&505,00	&1,00	&505,00	\\
+		2	&379,63	&123	&2	&6	&505	&1,00	&2	&6	&505	&1,00	&505	\\
 		3	&407,61	&113,65	&3	&10	&832,94	&1,35	&3	&9	&701,21	&1,14	&617,45	\\
 		4	&396,20	&129,58	&3	&5	&1077,55	&1,41	&3	&5	&1015,18	&1,33	&761,80	\\
 		5	&482,74	&111,03	&4	&8	&1050,78	&1,31	&4	&8	&1064,82	&1,33	&802,49	\\
 		6	&396,95	&198,18	&3	&8	&913,68	&1,57	&3	&6	&588,60	&1,01	&581,07	\\
 		7	&566,56	&147,91	&2	&8	&922,11	&1,29	&2	&8	&716,82	&1,01	&712,55	\\
-		8	&389,00	&115,07	&3	&8	&562,61	&1,08	&3	&8	&562,61	&1,08	&522,19	\\
+		8	&389	&115,07	&3	&8	&562,61	&1,08	&3	&8	&562,61	&1,08	&522,19	\\
 		9	&206,94	&113,13	&3	&6	&772,37	&1,57	&3	&6	&698,41	&1,42	&493,11	
 	\end{tabu}
-	\caption{Instanzen 0-9, jeweils mit 5 Kunden und 5 Fabriken}\label{tab1}
+	\caption{Instanzen 0-9, jeweils mit 5 Kunden und 5 Fabriken \\
+	Spalten (vlnr.): Kosten der optimalen Lsg. der \UFL- bzw. \MST-Instanzen, Zahl der geöffneten Fabriken in Greedy-Lsg., Zahl der Touren, Gesamtkosten und Vergleich der Gesamtkosten zu den optimalen Kosten, analog für iterative Lsg, Kosten der optimalen Lsg.}\label{tab1}
 	\end{figure}
 
-	\begin{figure}[h]\centering\small
+	\begin{figure}[H]\centering\small
 	\begin{tabu}{l||r|r||c|c|r|r||c|c|r|r||r|l}	
 	\rowfont{\bfseries}
-		\#  & \UFL	& \MST	& \multicolumn{4}{c||}{Greedy}		& \multicolumn{4}{c||}{Iterativ}	& \multicolumn{2}{c||}{optimal}	\\\hline\hline
-		10	&687,15	&157,28	&3	&15	&1096,58	&1,32	&3	&15	&1096,58	&1,32	&833,00	&1027,00	\\
-		11	&687,92	&190,59	&3	&14	&1248,96	&1,46	&4	&13	&1192,24	&1,39	&856,00	&879,00	\\
-		12	&480,02	&180,59	&2	&13	&806,66	&1,35	&2	&13	&806,66	&1,35	&598,00	&754,00	\\
-		13	&1043,80	&151,78	&4	&21	&2311,70	&1,61	&4	&19	&1897,62	&1,32	&1439,00	&1731,00	\\
-		14	&500,34	&181,41	&2	&9	&1043,67	&1,70	&2	&9	&1043,67	&1,70	&614,00	&771,00	\\
-		15	&806,04	&223,23	&3	&16	&1502,07	&1,63	&3	&14	&1007,34	&1,10	&919,00	&1000,00	\\
-		16	&504,80	&140,26	&3	&10	&1184,91	&1,46	&3	&9	&1101,00	&1,36	&809,00	&1055,00	\\
-		17	&966,57	&191,92	&3	&13	&1847,71	&1,66	&3	&15	&1822,26	&1,64	&1111,00	&1262,00	\\
-		18	&584,23	&228,74	&3	&11	&1374,03	&1,63	&3	&10	&1155,71	&1,37	&843,00	&934,00	\\
-		19	&510,64	&197,01	&3	&13	&1252,55	&1,58	&4	&13	&1160,15	&1,46	&793,00	&931,00
+		\#  & \UFL	& \MST	& \multicolumn{4}{c||}{Greedy}		& \multicolumn{4}{c||}{Iterativ}	& \multicolumn{2}{c}{optimal}	\\\hline\hline
+		10	&687,15	&157,28	&3	&15	&1096,58	&1,32	&3	&15	&1096,58	&1,32	&833	&1027	\\
+		11	&687,92	&190,59	&3	&14	&1248,96	&1,46	&4	&13	&1192,24	&1,39	&856	&879	\\
+		12	&480,02	&180,59	&2	&13	&806,66	&1,35	&2	&13	&806,66	&1,35	&598	&754	\\
+		13	&1043,80	&151,78	&4	&21	&2311,70	&1,61	&4	&19	&1897,62	&1,32	&1439	&1731	\\
+		14	&500,34	&181,41	&2	&9	&1043,67	&1,70	&2	&9	&1043,67	&1,70	&614	&771	\\
+		15	&806,04	&223,23	&3	&16	&1502,07	&1,63	&3	&14	&1007,34	&1,10	&919	&1000	\\
+		16	&504,80	&140,26	&3	&10	&1184,91	&1,46	&3	&9	&1101	&1,36	&809	&1055	\\
+		17	&966,57	&191,92	&3	&13	&1847,71	&1,66	&3	&15	&1822,26	&1,64	&1111	&1262	\\
+		18	&584,23	&228,74	&3	&11	&1374,03	&1,63	&3	&10	&1155,71	&1,37	&843	&934	\\
+		19	&510,64	&197,01	&3	&13	&1252,55	&1,58	&4	&13	&1160,15	&1,46	&793	&931
 	\end{tabu}
-	\caption{Instanzen 10-19, jeweils mit 10 Kunden und 5 Fabriken}\label{tab2}
+	\caption{Instanzen 10-19, jeweils mit 10 Kunden und 5 Fabriken  \\
+		Spalten (vlnr.): Kosten der optimalen Lsg. der \UFL- bzw. \MST-Instanzen, Zahl der geöffneten Fabriken in Greedy-Lsg., Zahl der Touren, Gesamtkosten und Vergleich der Gesamtkosten zu unterer Schranke für optimale Kosten, analog für iterative Lsg, untere und obere Schranke für die Kosten der optimalen Lsg.}\label{tab2}
 	\end{figure}
 
-	\begin{figure}[h]\centering\small
+Allgemein ist zu beobachten, dass die iterative Variante des Algorithmus fast immer die bessere Lösung findet. Der einzige Fall, in dem das Greedy-Verfahren eine (leicht) bessere Lösung findet ist Instanz 5 (\cref{fig:GreedyBesser}). Die Kosten der iterativ gefunden Lösung liegen für die beiden kleineren Instanzgrößen fast immer weniger als $50\%$ über denen der Optimallösung (einzige Ausnahmen sind die Instanzen 14 ($70\%$) und 17 ($64\%$)).
+
+	\begin{figure}[H]\centering\small
 	\begin{tabu}{l||r|r||c|c|r|r||c|c|r|r}	
 	\rowfont{\bfseries}
-		\#  & \UFL	& \MST	& \multicolumn{4}{c||}{Greedy}		& \multicolumn{4}{c||}{Iterativ}	\\\hline\hline
-		20	&3664,00	&637,77	&12	&142	&7376,38	&2,01	&11	&138	&6055,17	&1,65	\\
-		21	&3343,00	&663,13	&10	&127	&9036,68	&2,70	&10	&124	&7886,90	&2,36	\\
-		22	&3278,00	&627,40	&10	&134	&6900,57	&2,11	&10	&133	&5789,26	&1,77	\\
-		23	&3708,00	&657,93	&11	&145	&8438,01	&2,28	&12	&145	&6876,61	&1,85	\\
-		24	&3517,00	&610,64	&11	&148	&8449,90	&2,40	&10	&145	&6599,23	&1,88	\\
-		25	&3674,00	&611,15	&12	&147	&13676,00	&3,72	&14	&148	&7966,28	&2,17	\\
-		26	&3667,00	&604,93	&11	&137	&11731,00	&3,20	&11	&134	&6924,47	&1,89	\\
-		27	&3299,00	&580,00	&10	&138	&7048,85	&2,14	&11	&138	&6356,29	&1,93	\\
-		28	&4231,00	&628,85	&12	&139	&12500,00	&2,95	&12	&138	&7707,41	&1,82	\\
-		29	&3896,00	&653,93	&10	&128	&9392,28	&2,41	&11	&128	&6672,22	&1,71	\\
-		30	&3545,00	&652,85	&18	&150	&12832,60	&3,62	&19	&148	&8949,20	&2,52	\\
-		31	&4170,00	&603,77	&18	&136	&13329,30	&3,20	&17	&132	&8082,80	&1,94	\\
-		32	&3279,00	&605,83	&18	&136	&10169,70	&3,10	&20	&132	&7010,38	&2,14	\\
-		33	&3754,00	&615,46	&19	&144	&13512,80	&3,60	&17	&142	&8531,30	&2,27	\\
-		34	&3774,00	&626,99	&19	&150	&11016,50	&2,92	&20	&147	&8132,92	&2,15	\\
-		35	&3844,00	&667,64	&19	&125	&12640,50	&3,29	&17	&120	&7330,49	&1,91	\\
-		36	&3733,00	&643,69	&19	&133	&13099,00	&3,51	&18	&131	&8219,38	&2,20	\\
-		37	&3593,00	&637,28	&19	&140	&11173,20	&3,11	&18	&139	&6998,50	&1,95	\\
-		38	&3204,00	&608,59	&18	&138	&11362,70	&3,55	&18	&135	&7446,43	&2,32	\\
-		39	&3964,00	&627,60	&18	&144	&12016,30	&3,03	&18	&147	&8410,99	&2,12
+		\#  & \UFL	& \MST	& \multicolumn{4}{c||}{Greedy}		& \multicolumn{4}{c}{Iterativ}	\\\hline\hline
+		20	&3664	&637,77	&12	&142	&7376,38	&2,01	&11	&138	&6055,17	&1,65	\\
+		21	&3343	&663,13	&10	&127	&9036,68	&2,70	&10	&124	&7886,90	&2,36	\\
+		22	&3278	&627,40	&10	&134	&6900,57	&2,11	&10	&133	&5789,26	&1,77	\\
+		23	&3708	&657,93	&11	&145	&8438,01	&2,28	&12	&145	&6876,61	&1,85	\\
+		24	&3517	&610,64	&11	&148	&8449,90	&2,40	&10	&145	&6599,23	&1,88	\\
+		25	&3674	&611,15	&12	&147	&13676	&3,72	&14	&148	&7966,28	&2,17	\\
+		26	&3667	&604,93	&11	&137	&11731	&3,20	&11	&134	&6924,47	&1,89	\\
+		27	&3299	&580	&10	&138	&7048,85	&2,14	&11	&138	&6356,29	&1,93	\\
+		28	&4231	&628,85	&12	&139	&12500	&2,95	&12	&138	&7707,41	&1,82	\\
+		29	&3896	&653,93	&10	&128	&9392,28	&2,41	&11	&128	&6672,22	&1,71	\\
+		30	&3545	&652,85	&18	&150	&12832,60	&3,62	&19	&148	&8949,20	&2,52	\\
+		31	&4170	&603,77	&18	&136	&13329,30	&3,20	&17	&132	&8082,80	&1,94	\\
+		32	&3279	&605,83	&18	&136	&10169,70	&3,10	&20	&132	&7010,38	&2,14	\\
+		33	&3754	&615,46	&19	&144	&13512,80	&3,60	&17	&142	&8531,30	&2,27	\\
+		34	&3774	&626,99	&19	&150	&11016,50	&2,92	&20	&147	&8132,92	&2,15	\\
+		35	&3844	&667,64	&19	&125	&12640,50	&3,29	&17	&120	&7330,49	&1,91	\\
+		36	&3733	&643,69	&19	&133	&13099	&3,51	&18	&131	&8219,38	&2,20	\\
+		37	&3593	&637,28	&19	&140	&11173,20	&3,11	&18	&139	&6998,50	&1,95	\\
+		38	&3204	&608,59	&18	&138	&11362,70	&3,55	&18	&135	&7446,43	&2,32	\\
+		39	&3964	&627,60	&18	&144	&12016,30	&3,03	&18	&147	&8410,99	&2,12
 	\end{tabu}
-	\caption{Instanzen 20-39, jeweils mit 100 Kunden und 20 Fabriken}\label{tab3}
+	\caption{Instanzen 20-39, jeweils mit 100 Kunden und 20 Fabriken \\
+		Spalten (vlnr.): Kosten der optimalen Lsg. der \UFL- bzw. \MST-Instanzen, Zahl der geöffneten Fabriken in Greedy-Lsg., Zahl der Touren, Gesamtkosten und Vergleich der Gesamtkosten zu den Kosten der \UFL-Lsg, analog für iterative Lsg}\label{tab3}
 	\end{figure}
 
-	Allgemein ist zu beobachten, dass die iterative Variante des Algorithmus fast immer die bessere Lösung findet. Der einzige Fall, in dem das Greedy-Verfahren eine (leicht) bessere Lösung findet ist Instanz 5 (\cref{fig:GreedyBesser}). Die Kosten der iterativ gefunden Lösung liegen für die beiden kleineren Instanzgrößen fast immer weniger als $50\%$ über denen der Optimallösung (einzige Ausnahmen sind die Instanzen 14 ($70\%$) und 17 ($64\%$)).
+	\begin{figure}[H]\centering\small
+	\begin{tabu}{l||r|r||c|c|r|r||c|c|r|r}	
+		\rowfont{\bfseries}
+		\#  & \UFL	& \MST	& \multicolumn{4}{c||}{Greedy}		& \multicolumn{4}{c}{Iterativ}	\\\hline\hline
+		40	&28650	&2059	&24	&1681	&94953	&3,31	&26	&1680	&55025,60	&1,92	\\
+		41	&26790	&2080,61	&27	&1675	&116653	&4,35	&29	&1682	&73469	&2,74	\\
+		42	&25070	&2056,33	&26	&1622	&74592,30	&2,98	&28	&1627	&56559,90	&2,26	\\
+		43	&28540	&2073,93	&25	&1640	&96273,50	&3,37	&25	&1641	&73552,20	&2,58	\\
+		44	&28410	&2084,98	&26	&1692	&118856	&4,18	&29	&1688	&52077,20	&1,83	\\
+		45	&25830	&2067,19	&22	&1670	&87186,10	&3,38	&23	&1664	&69213,50	&2,68	\\
+		46	&27750	&2062,58	&29	&1666	&97460,80	&3,51	&30	&1672	&49155,90	&1,77	\\
+		47	&24040	&2081,49	&27	&1634	&70462,80	&2,93	&29	&1628	&44420,60	&1,85	\\
+		48	&27040	&2100,30	&25	&1633	&101539	&3,76	&25	&1632	&52512,10	&1,94	\\
+		49	&25830	&2049,23	&26	&1636	&101836	&3,94	&27	&1630	&67765,80	&2,62
+	\end{tabu}
+	\caption{Instanzen 40-49, jeweils mit 1000 Kunden und 50 Fabriken \\
+		Spalten (vlnr.): Kosten der optimalen Lsg. der \UFL- bzw. \MST-Instanzen, Zahl der geöffneten Fabriken in Greedy-Lsg., Zahl der Touren, Gesamtkosten und Vergleich der Gesamtkosten zu den Kosten der \UFL-Lsg, analog für iterative Lsg}\label{tab4}
+	\end{figure}
+
+Bei den Instanzen mit $100$ Kunden liegen die Kosten der vom iterativen Verfahren gefundenen Lösungen bis zu $150\%$ über denen der optimalen \UFL-Lösung. Es ist allerdings anzunehmen, dass diese die tatsächlichen Kosten der optimalen \CLRHFC-Lösung im allgemeinen deutlich unterschätzen (bei den kleineren Instanzen liegen die Kosten der optimalen \CLRHFC-Lösung meisten $\sim 50\%$ höher). 
+
+Festzuhalten ist auch, dass sich eine geringe Gesamtfabrikkapazität für die Greedy-Strategie stärker negativ bemerkbar zu machen scheint als für die iterative Strategie.
 	
-	Bei den Instanzen mit $100$ Kunden liegen die Kosten der vom iterativen Verfahren gefundenen Lösungen bis zu $150\%$ über denen der optimalen \UFL-Lösung. Es ist allerdings anzunehmen, dass diese die tatsächlichen Kosten der optimalen \CLRHFC-Lösung im allgemeinen deutlich unterschätzen (bei den kleineren Instanzen liegen die Kosten der optimalen \CLRHFC-Lösung meisten $\sim 50\%$ höher). 
+	Bei den großen Instanzen schließlich ist die gefundene Lösung für jede der getesteten Instanzen noch mindestens 3-approximativ und in der Hälfte der Fälle sogar weniger als doppelt so teuer wie die optimale Lösung. Zudem zeigt sich hier, dass der Algorithmus immer noch relativ schnell arbeitet: Auf einem durchschnittlichen Laptop benötigt die Greedy-Variante hier weniger als 2 Sekunden, die iterative maximaler als 5 Sekunden. Deutlich stärker fällt in diesen Fällen die anscheinend verhältnismäßig ineffiziente Implementierung des Edmonds-Karp-Algorithmus mit zum Teil mehreren Minuten Laufzeit ins Gewicht.
 	
-	Festzustellen ist auch, dass sich eine geringe Gesamtfabrikkapazität für die Greedy-Strategie stärker negativ bemerkbar zu machen scheint als für die iterative Strategie. \todo{Erklärung hierfür?}
-	
-	\begin{figure}[h]
+	\begin{figure}[h]\centering
 		\includegraphics[width=.3\textwidth]{bilder/GreedyBesser-Greedy.pdf}
 		\includegraphics[width=.3\textwidth]{bilder/GreedyBesser-It.pdf}
 		\includegraphics[width=.3\textwidth]{bilder/GreedyBesser-OPT.pdf}
 		\caption{Die einzige Instanz, auf der die Greedy-Strategie die iterative schlägt \\ (Greedy-Lsg, iterative Lsg, optimale Lsg)}\label{fig:GreedyBesser}
 	\end{figure}
 
+\newpage
+
 \section*{Ausblick}
 	
-Wir haben nun also gesehen wie Large Demand- und Merge-Phase des $\CLR$-Algorithmus so angepasst werden können, dass dieser auch für \CLRHFC-Instanzen zulässige Lösungen findet. Ferner hat die heuristische Betrachtung gezeigt, dass dabei zumindest für verhältnismäßig kleine Instanzen\todo{evtl. weglassen, wenn auch größere Instanzen geprüft wurden} in der euklidischen Ebene bereits meist eine akzeptable Approximationsgüte erreicht wird. Gleichzeitig zeigt aber \Cref{satz:schlechteApproximationsguete}, dass es - ebenfalls schon in der euklidischen Ebene - auch Instanzen gibt, auf denen die Approximation beliebig schlecht wird.
+Wir haben nun also gesehen wie Large Demand- und Merge-Phase des $\CLR$-Algorithmus so angepasst werden können, dass dieser auch für \CLRHFC-Instanzen zulässige Lösungen findet. Ferner hat die heuristische Betrachtung gezeigt, dass dabei zumindest in der euklidischen Ebene bereits meist eine akzeptable Approximationsgüte erreicht wird. Gleichzeitig zeigt aber \Cref{satz:schlechteApproximationsguete}, dass es - ebenfalls schon in der euklidischen Ebene - auch Instanzen gibt, auf denen die Approximation beliebig schlecht wird.
 	
 Eine naheliegender nächster Schritt auf der Suche nach einem guten Approximationsalgorithmus wäre nun vielleicht auch die \UFL- und \MST-Phasen anzupassen, sodass die Fabrikkapazitäten bereits dort eine Rolle spielen. Zumindest für den \UFL-Teil sind hierzu auch passende Approximationsalgorithmen bekannt (z.B. \cite{Pal01facilitylocation}), allerdings zeigt etwa das in \cref{fig:bsp:schlechterMST} gezeigte Beispiel, dass dies allein vermutlich nicht ausreichen wird, da auch das Finden eines guten Spannbaums eine zentrale Rolle spielt.
 
@@ -707,7 +798,6 @@ Zudem ergibt sich durch das Einführen von Fabrikkapazitäten noch ein neues Pro
 Denn: Nur weil ein Kunde bspw. in der \MST-Lösung mit einer nahen Fabrik verbunden ist (was dann später zur Abschätzung der tatsächlichen Anbindungskosten dienen soll), ist noch nicht sicher gestellt, dass diese Anbindung auch noch verfügbar ist, wenn dieser Kunde in der Merge-Phase tatsächlich an die Reihe kommt. Es kann vielmehr auch passieren, dass die entsprechende Fabrik zu diesem Zeitpunkt bereits durch andere Kunden voll ausgelastet ist. Es ist anzunehmen, dass derartige Effekte die Beschränkung der Kosten der letztendlich gefundenen Lösung im Allgemeinen deutlich erschwert und evtl. macht dies noch weitere Anpassungen der Merge-Phase nötig.
 
 \newpage	
-\listoftodos
 
 \newpage
 \nocite{*}
