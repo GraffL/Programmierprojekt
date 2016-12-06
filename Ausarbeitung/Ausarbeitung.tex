@@ -43,16 +43,6 @@
 \newcommand{\LineFor}[2]{\State\algorithmicfor\ {#1}\ \algorithmicdo\ {#2} \algorithmicend\ \algorithmicfor}
 
 \usepackage{listings}			% Anzeige von Sourcecode
-% Umlaute in Code:
-\lstset{literate=%
-	{Ö}{{\"O}}1
-	{Ä}{{\"A}}1
-	{Ü}{{\"U}}1
-	{ü}{{\"u}}1
-	{ä}{{\"a}}1
-	{ö}{{\"o}}1
-}
-
 
 \setlength\parskip{\medskipamount}
 \setlength\parindent{0pt}
@@ -126,6 +116,25 @@
 \lstset{basicstyle=\small\ttfamily}
 \lstset{frame=Tb, captionpos=b}
 \lstset{xleftmargin=1em, xrightmargin=1em, aboveskip=2\medskipamount}
+% Umlaute in Code:
+\lstset{literate=%
+	{Ö}{{\"O}}1
+	{Ä}{{\"A}}1
+	{Ü}{{\"U}}1
+	{ü}{{\"u}}1
+	{ä}{{\"a}}1
+	{ö}{{\"o}}1
+}
+\definecolor{purplekeywords}{rgb}{0.5,0,0.33}
+\definecolor{greencomments}{rgb}{0,0.5,0}
+\definecolor{bluestrings}{rgb}{0,0,1}
+\definecolor{types}{rgb}{0.17,0.57,0.68}
+\lstset{
+	commentstyle=\color{greencomments},
+	morekeywords={},
+	keywordstyle=\color{purplekeywords}\textbf,
+	stringstyle=\color{bluestrings},
+}
 
 \setcounter{tocdepth}{3}
 
