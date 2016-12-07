@@ -160,7 +160,7 @@
 	
 	% Title
 	{\Large Ausarbeitung \\[1cm]}
-	zum Programmierprojekt\\[1cm]
+	zum mathematischen Softwareprojekt\\[1cm]
 	{\huge Capacitated Location Routing \\ with Hard Facility Capacities}
 
 	\begin{center}
@@ -194,13 +194,13 @@
 	
 \section*{Einleitung}
 
-Gegeben eine Menge von Kunden mit unterschiedlich großen Bedarfen nach einem einheitlichen Gut, eine Menge möglicher Fabrikstandorte mit jeweils verschiedenen Eröffnungskosten, eine unbegrenzte Anzahl von Lieferfahrzeugen mit einheitlicher Kapazität sowie eine metrische Abstandsfunktion auf der Gesamtmenge. Welche Standorte sollte man eröffnen und wie sollte man die Fahrzeuge einsetzen um alle Bedarfe aller Kunden zu erfüllen und dabei die Summe der Kosten für Fabrikeröffnungen und gefahrene Strecken zu minimieren?
+Gegeben eine Menge von Kunden mit unterschiedlich großen Bedarfen nach einem einheitlichen Gut, eine Menge möglicher Fabrikstandorte mit jeweils verschiedenen Eröffnungskosten, eine unbegrenzte Anzahl von Lieferfahrzeugen mit einheitlicher Kapazität sowie eine metrische Abstandsfunktion auf der Gesamtmenge. Welche Standorte sollte man eröffnen und wie sollte man die Fahrzeuge einsetzen um die Bedarfe aller Kunden zu erfüllen und dabei die Summe der Kosten für Fabrikeröffnungen und gefahrene Strecken zu minimieren?
 
-Diese Fragestellung beschreibt das \emph{Capacitated Location Routing}-Problem (\CLR), ein NP-schweres Optimierungsproblem.
+Diese Fragestellung wird im \emph{Capacitated Location Routing}-Problem (\CLR) formalisiert, einem NP-schweren Optimierungsproblem.
 
 Da es also vermutlich keinen polynomiellen exakten Algorithmus hierfür gibt, interessiert man sich dafür polynomielle Approximationsalgorithmen hierfür zu finden. Einen solchen $4,38$-approximativen Algorithmus beschrieben und implementierten Harks, König und Matuschke in \cite{AAfCLR}. 
 
-Aufbauend auf diesem existierenden Programm wurden im Rahmen des hier beschriebenen Programmierprojekts zwei Ergänzungen zu diesem Algorithmus bzw. dessen Implementierung vorgenommen: Es wurde die Möglichkeit hinzugefügt das Ergebnis sowie verschiedene Zwischenschritte des Algorithmus graphisch auszugeben. Und der Algorithmus selbst wurde um zwei Varianten ergänzt, die nun zusätzlich mit Kapazitätsbeschränkungen der Fabriken umgehen können, und weiterhin zulässige Lösungen finden (allerdings ohne garantierte Approximationsgüte).
+Aufbauend auf diesem existierenden Programm habe ich im Rahmen des hier beschriebenen Softwareprojekts zwei Ergänzungen zu diesem Algorithmus bzw. dessen Implementierung vorgenommen: Es wurde die Möglichkeit hinzugefügt das Ergebnis sowie verschiedene Zwischenschritte des Algorithmus graphisch auszugeben. Der Algorithmus selbst wurde um zwei Varianten ergänzt, die nun zusätzlich mit Kapazitätsbeschränkungen der Fabriken umgehen können, und weiterhin zulässige Lösungen finden (allerdings ohne garantierte Approximationsgüte).
 
 In der folgenden Ausarbeitung wird zunächst kurz der bestehende Algorithmus für \CLR{} skizziert und dann die Implementierung der beiden neuen Bestandteile beschrieben. Schließlich wird der erweiterte Algorithmus auf einigen Instanzen getestet.
 
@@ -232,7 +232,7 @@ sodass gilt:
 	\item Keine der Touren übersteigt die Kapazität $u$.
 \end{itemize}
 Das Optimierungsziel ist es die Gesamtkosten für das Eröffnen der Fabriken und die gefahrenen Touren zu minimieren, also die Minimierung der Kostenfunktion
-\footnote{Wir verwenden hier, dass eine Funktion $\IR$-wertige Funktion $c: M \to \IR$ auf einer Menge $M$ eine Funktion $\tilde{c}: \mathcal{P}(M) \to \IR: M \supseteq N \mapsto \sum_{x \in N} c(x)$ auf der Potenzmenge $\mathcal{P}(M)$ induziert. Zur Vereinfachung der Notation bezeichnen wir diese Funktion dann ebenfalls mit $c$. Unter nochmaliger Anwendung dieser Konvention ließe sich die obige Kostenfunktion daher auch als $c(\Tc) + \phi(F)$ schreiben.}
+\footnote{Wir verwenden hier, dass eine $\IR$-wertige Funktion $c: M \to \IR$ auf einer beliebigen Menge $M$ eine Funktion $\tilde{c}: \mathcal{P}(M) \to \IR: M \supseteq N \mapsto \sum_{x \in N} c(x)$ auf der Potenzmenge $\mathcal{P}(M)$ induziert. Zur Vereinfachung der Notation bezeichnen wir diese Funktion dann ebenfalls mit $c$. Unter nochmaliger Anwendung dieser Konvention ließe sich die obige Kostenfunktion daher noch kürzer als $c(\Tc) + \phi(F)$ schreiben.}
 	\[\sum_{T\in\Tc} c(T) + \sum_{f\in F}\phi(f) \]
 	
 \begin{beob}
@@ -246,14 +246,14 @@ Das Optimierungsziel ist es die Gesamtkosten für das Eröffnen der Fabriken und
 
 	\subsection{Ein Approximationsalgorithmus für \CLR}
 
-Der in \cite{AAfCLR} beschriebene $4,38$-approximative\footnote{Die diesem Programmierprojekt zugrunde liegende Implementierung weist allerdings nur eine Approximationsgarantie von $5,722$ auf, da zur approximativen Lösung der \UFL-Instanz ein leichter zu implementierender Greedy-Algorithmus verwendet wurde, anstatt eines anderen Verfahrens mit besserer Approximationsgarantie.} Algorithmus für \CLR{} basiert im Wesentlichen auf den folgenden Schritten (schematisch dargestellt in \cref{fig:CLRAlg}):
+Der in \cite{AAfCLR} beschriebene $4,38$-approximative\footnote{Die diesem Softwareprojekt zugrunde liegende Implementierung weist allerdings nur eine Approximationsgarantie von $5,722$ auf, da zur approximativen Lösung der \UFL-Instanz ein leichter zu implementierender Greedy-Algorithmus verwendet wurde, anstatt des im Beweis zitierten Algorithmus mit besserer Approximationsgarantie.} Algorithmus für \CLR{} basiert im Wesentlichen auf den folgenden Schritten (schematisch dargestellt in \cref{fig:CLRAlg}):
 \begin{description}
-	\item[\UFL-Phase:] Erstelle eine \UFL-Instanz mit den gleichen Fabriken und Kunden, aber mit um $2/u$ skalierten Kosten. Löse diese Instanz approximativ und eröffne alle hier geöffneten Fabriken auch in der \CLR-Instanz. Es zeigt sich, dass die Kosten einer optimalen Lösung der \UFL-Instanz eine untere Schranke für die optimale Lösung der \CLR-Instanz bildet.
-	\item[\MST-Phase:] Ergänze den Graphen der \CLR-Instanz um einen zusätzlichen Knoten $r$ mit kostenlosen Kanten zu allen Fabriken. Erhöhe ferne alle Kanten zwischen Fabriken und Kunden um die halben Eröffnungskosten der jeweiligen Fabrik. Dann finde einen minimalen Spannbaum $B$ in diesem Graphen und öffne in der \CLR-Instanz zusätzlich alle Fabriken, die in $B$ wenigstens einen Kunden als Nachbarn haben. Die Kosten einen solchen Spannbaumes sind erneut eine untere Schranke für die Kosten einer optimalen Lösung der \CLR-Instanz.
+	\item[\UFL-Phase:] Erstelle eine \UFL-Instanz mit den gleichen Fabriken und Kunden, aber mit um $2/u$ skalierten Kosten. Löse diese Instanz approximativ und eröffne alle hier geöffneten Fabriken auch in der \CLR-Instanz. Es zeigt sich, dass die Kosten einer optimalen Lösung der \UFL-Instanz eine untere Schranke für die optimale Lösung der \CLR-Instanz bilden.
+	\item[\MST-Phase:] Ergänze den Graphen der \CLR-Instanz um einen zusätzlichen Knoten $r$ mit kostenlosen Kanten zu allen Fabriken. Erhöhe ferner die Kosten aller Kanten zwischen Fabriken und Kunden um die halben Eröffnungskosten der jeweiligen Fabrik. Dann finde einen minimalen Spannbaum $B$ in diesem Graphen und öffne in der \CLR-Instanz zusätzlich alle Fabriken, die in $B$ wenigstens einen Kunden als Nachbarn haben. Die Kosten eines solchen Spannbaumes sind erneut eine untere Schranke für die Kosten einer optimalen Lösung der \CLR-Instanz.
 	\item[Large Demand-Phase:] Alle Kunden mit Bedarf von mindestens $u$ werden durch $\ceil{d/u}$ Touren mit der jeweils nächsten Fabrik verbunden. Die hierfür anfallenden Anbindungskosten sind höchstens zweimal die entsprechenden Kosten aus der \UFL-Phase.
 	\item[Merge-Phase] Betrachte $B$ aus der \MST-Phase als Baum mit Wurzel $r$. Solange dies möglich ist, finde darin einen Teilbaum (mit Wurzel $v$), der einen Gesamtbedarf von mehr als $u$ hat, aber dessen nächstkleinere Teilbäume (beginnend bei den Kindern von $v$) einen Bedarf von höchstens $u$ haben. Ein solcher Baum wird als \emph{Relieve-Tree} bezeichnet.
 	 
-	Fasse diese kleineren Teilbäume und den \glqq Baum\grqq{} $\{v\}$ so zusammen, dass jede Menge einen Bedarf zwischen $\frac{u}{2}$ und $u$ hat (die letzte ggfls. weniger). Wandle jede der großen Mengen in eine Tour um (durch Verdoppeln der Kanten im entsprechenden Teilbaum und nachfolgendem Abkürzen bei doppelt besuchten Kunden) und verbinde sie mit der nächstliegenden offenen Fabrik. Die Verbindungskosten hierfür sind beschränkt durch das Doppelte der Kosten im Spannbaum $B$ und den entsprechenden Verbindungskosten aus der \UFL-Phase. Die Kunden aus der kleinen Menge bleiben vorerst unversorgt und werden beim nächsten Relieve-Tree neu berücksichtigt.
+	Fasse dessen kleineren Teilbäume und den \glqq Baum\grqq{} $\{v\}$ so zusammen, dass jede Menge einen Bedarf zwischen $\frac{u}{2}$ und $u$ hat (die letzte ggfls. weniger). Wandle jede der großen Mengen in eine Tour um (durch Verdoppeln der Kanten im entsprechenden Teilbaum und nachfolgendes Abkürzen bei doppelt besuchten Kunden) und verbinde sie mit der nächstliegenden offenen Fabrik. Die Verbindungskosten hierfür sind beschränkt durch das Doppelte der Kosten im Spannbaum $B$ und den entsprechenden Verbindungskosten aus der \UFL-Phase. Die Kunden aus der kleinen Menge bleiben vorerst unversorgt und werden beim nächsten Relieve-Tree neu berücksichtigt.
 	
 	Ist der verbleibende Gesamtbedarf unter einer Fabrik schließlich kleiner oder gleich $u$, so werden alle im entsprechenden Teilbaum verbliebenen Kunden zu einer Tour (\emph{Remaining-Tour}) zusammengefasst und mit der nächstliegenden offenen Fabrik verbunden. Die Verbindungskosten hierfür sind erneut durch das Doppelte der entsprechenden Kosten aus dem Spannbaum begrenzt.
 \end{description}
@@ -267,7 +267,7 @@ Der in \cite{AAfCLR} beschriebene $4,38$-approximative\footnote{Die diesem Progr
 
 \subsection{Visualisierung des Algorithmus}
 
-Im ersten Teil des Programmierprojektes ging es darum den Ablauf sowie das Ergebnis des oben beschriebenen Algorithmus zu visualisieren. Dazu wurde die existierende Implementierung des Algorithmus um eine Klasse \lstinline|CLR_Drawing| erweitert. Diese bietet die Möglichkeit das Ergebnis sowie verschiedene Zwischenstadien des Algorithmus graphisch abzubilden. 
+Im ersten Teil des Softwareprojektes ging es darum den Ablauf sowie das Ergebnis des oben beschriebenen Algorithmus zu visualisieren. Dazu habe ich die existierende Implementierung des Algorithmus um eine Klasse \lstinline|CLR_Drawing| erweitert. Diese bietet die Möglichkeit das Ergebnis sowie verschiedene Zwischenstadien des Algorithmus graphisch abzubilden. 
 
 Die Ausgabe besteht aus SVG-Dateien, die mit Hilfe der \Cpp-Bibliothek simple-svg (\cite{simple-svg}) erstellt werden. Diese können dann beispielsweise von Hand übereinander gelegt werden, um ein bestimmtes Zwischenstadium des Algorithmus darzustellen, oder zu einer Animation zusammengesetzt werden, um den gesamten Ablauf des Algorithmus abzubilden.
 
@@ -285,7 +285,7 @@ Ein Beispiel für ersteres sind die Bilder in dieser Arbeit, ein Beispiel für L
 	\fbox{\includegraphics[width=.19\textwidth]{bilder/demo_singleTour.pdf}}
 	\fbox{\includegraphics[width=.19\textwidth]{bilder/demo_allTours.pdf}}
 	
-	\caption{Ausgaben der Klasse \lstinline|CLR_Drawing|: Die Instanz selbst, die Lösung der UFL-Instanz, die Lösung der MST-Instanz, Touren aus der Large-Demand-Phase, ein Relieve-Tree, eine daraus entstandene Tour, eine Remaining-Tour, eine einzelne Tour, alle Touren}
+	\caption{Ausgaben der Klasse \lstinline|CLR_Drawing|: Die Instanz selbst, die Lösung der UFL-Instanz, die Lösung der MST-Instanz, Touren aus der Large-Demand-Phase, ein Relieve-Tree, daraus entstandene Relieve-Touren, eine Remaining-Tour, eine einzelne Tour, alle Touren}
 \end{figure}
 
 Die Klasse \lstinline|CLR-Drawing| ist als Singelton implementiert, wodurch zum einen sicher gestellt ist, dass immer nur eine Instanz dieser Klasse existiert, und zum anderen jede Funktion auf die Instanz zugreifen kann, ohne das diese jeweils explizit übergeben werden muss. 
@@ -312,17 +312,15 @@ bool init(vector<vector<double> > c_pos, vector<vector<double> >
 d_pos, vector<double> dems, vector<double> oCosts, double u);
 bool init(const char* fileName);
 bool init(const char* fileName, bool fac_cap_relevant);
-bool init();
+bool init(); // Wenn keine Zeichnungen erstellt werden sollen
 
 // Zeichnet die Instanz selbst (Kunden, Fabrikstandorte, Legende)
 void draw_instance();
-
- served, svg::Color color);
 // Zeichnet Lösung der UFL-Instanz:
 void draw_UFL_solution(vector<bool> facOpen, vector<int> facForClient);
 // Zeichnet den in der MST-Phase gefundenen Spannbaum:
 void draw_tree(Tree tree);
-// Zeichnet eine einzelne tour in die übergebene SVG-Datei:
+// Zeichnet eine einzelne Tour in die übergebene SVG-Datei:
 void draw_tour(list<int> tour, svg::Color color, svg::Document* doc);
 void draw_tour(list<int> tour, svg::Color color, string filename);
 // Zeichnet das Ergebnis der Large Demand-Phase:
@@ -341,10 +339,8 @@ void draw_tours(list<list<int> > tours, bool monochrome = true);
 };
 \end{lstlisting}
 
-Für sich genommen kann die Klasse \lstinline|CLR_Drawing| außerdem auch dazu verwendet werden, anderweitig gefundene Touren für bestimmte Instanzen zu zeichnen. Dies ist zum Beispiel hilfreich, wenn man eine mittels eines MIP-Solvers gefundene optimale Lösung zeichnen lassen möchte. Dazu wurde ein eigenes Programm \lstinline|DrawTours| angelegt, dem zwei Dateien (eine die Instanz beschreibende und eine für die Touren) übergeben werden können, und welches daraus entsprechende Bilder generiert.
+Für sich genommen kann die Klasse \lstinline|CLR_Drawing| außerdem auch dazu verwendet werden, anderweitig gefundene Touren für bestimmte Instanzen zu zeichnen. Dies ist zum Beispiel hilfreich, wenn man eine mittels eines MIP-Solvers gefundene optimale Lösung zeichnen lassen möchte. Dazu habe ich ein eigenes Programm \lstinline|DrawTours| angelegt, dem zwei Dateien (eine die Instanz beschreibende und eine für die Touren) übergeben werden können, und welches daraus entsprechende Bilder generiert.
 
-
-\newpage
 
 \section{\CLR{} with Hard Facility Capacities (\CLRHFC)}
 
@@ -365,7 +361,7 @@ Das Optimierungsziel ist weiterhin die Minimierung der unveränderten Kostenfunk
 Im Gegensatz zu den hier verwendeten \emph{harten Fabrikkapazitäten} gibt es auch Varianten von \CLR{} mit \emph{weichen Fabrikkapazitäten}. Dies bedeutet, dass die Fabriken zwar beschränkte Kapazität haben, jedoch mehrfach eröffnet werden dürfen, wodurch die Kapazität (aber natürlich auch die Eröffnungskosten) entsprechend vervielfacht werden (siehe z.B. \cite{SoftCap1}).  
 \end{bem}
 
-\CLRHFC kann auch als Mixed Integer Program (MIP) beschrieben werden. Dabei gibt es
+\CLRHFC{} kann auch als Mixed Integer Program (MIP) beschrieben werden. Dabei gibt es
 \begin{itemize}
 	\item für jede Fabrik eine Variable $o_f$, welche bestimmt, ob die entsprechende Fabrik geöffnet ($1$) ist oder nicht ($0$),
 	\item sowie für jede mögliche Tour $T$ eine Variabel $y_T$, welche bestimmt, wie oft die entsprechende Tour genutzt wird,
@@ -381,9 +377,9 @@ Das MIP sieht dann wie folgt aus:
 	minimiere
 	\begin{align*}\sum_{f \in \FacilitySet} o_f \phi(f) + \sum_{T \in \allTours} y_T c(T)\end{align*}
 	unter den Nebenbedingungen:
-	\begin{align}	\sum_{v \in T\backslash\FacilitySet} x_{vT} \leq u y_T 								&,\quad T \in \allTours 						\\
-	\sum_{T \in \allTours_f} \sum_{v \in T\backslash\FacilitySet} x_{vT} \leq o_f l(f)	&,\quad f \in \FacilitySet						\\
-	\sum_{T \in \allTours, v \in T} x_{vT} \geq d(v)									&,\quad v \in \ClientSet					
+	\begin{align}	\sum_{v \in T\cap\ClientSet} x_{vT} \leq u y_T 						&,\quad T \in \allTours 						\\
+	\sum_{T \in \allTours_f} \sum_{v \in T\cap\ClientSet} x_{vT} \leq o_f l(f)			&,\quad f \in \FacilitySet						\\
+	\sum_{T \in \allTours: v \in T} x_{vT} \geq d(v)									&,\quad v \in \ClientSet					
 	\end{align}
 	wobei
 	\begin{align*}o_f \in \{0,1\},\quad y_T \in \IN_0, \quad x_{vT} \geq 0\end{align*}
@@ -394,15 +390,15 @@ Das MIP sieht dann wie folgt aus:
 	
 	
 	\begin{enumerate}\renewcommand{\theenumi}{\arabic{enumi}}
-		\item Die Fahrzeugkapazität $u$ wird eingehalten. D.h. wird eine Tour $y_T$-mal genutzt, so können durch sie höchstens $y_T u$ Einheiten an die auf ihr liegenden Kunden geliefert werden.
-		\item Die Fabrikkapazitäten $l$ werden eingehalten. Alle bei eine Fabrik $f$ beginnenden Touren ($\allTours_f$) können zusammen höchstens so viele Einheiten ausliefern, wie die Fabrikkapazität $l(f)$ zulässt.
+		\item Die Fahrzeugkapazität $u$ wird eingehalten. D.h. wird eine Tour $y_T$-mal genutzt, so können durch sie höchstens $u y_T$ Einheiten an die auf ihr liegenden Kunden geliefert werden.
+		\item Die Fabrikkapazitäten $l$ werden eingehalten. Alle bei eine Fabrik $f$ beginnenden Touren ($\allTours_f$) können zusammen höchstens so viele Einheiten ausliefern, wie die Fabrikkapazität $l(f)$ zulässt (und $f$ muss geöffnet sein).
 		\item Die Bedarfe der Kunden $d$ werden erfüllt. Dies ist der Fall, wenn alle Touren, auf denen ein Kunde $v$ liegt, zusammen mindestens so viel an ihn liefern, wie sein Bedarf $d(v)$ ist.
 	\end{enumerate}
 \end{minipage}
 }\vspace{1em}
 
 \begin{beob}
-	Die Menge aller denkbaren Touren $\allTours$ wächst exponentiell in der Zahl der Kunden der \CLRHFC-Instanz. Dementsprechend schnell steigt auch die Zahl der Variablen und der Nebenbedingungen an, sodass das Problem nur für sehr kleine Eingabeinstanzen exakt gelöst werden kann.
+	Die Menge aller denkbaren Touren $\allTours$ wächst exponentiell in der Zahl der Kunden der \CLRHFC-Instanz (genauer $|\allTours| = m \sum_{k=1}^{n} {n \choose k}k!$, wobei $m := |\FacilitySet|, n := |\ClientSet|$). Dementsprechend schnell steigt auch die Zahl der Variablen und der Nebenbedingungen an, sodass das Problem nur für sehr kleine Eingabeinstanzen exakt gelöst werden kann.
 \end{beob}
 
 
@@ -412,17 +408,17 @@ Das MIP sieht dann wie folgt aus:
 	
 	Ersteres lässt sich sicherstellen, indem Touren gegebenenfalls noch weiter in Teiltouren aufgespalten werden, die jeweils klein genug sind, um von einer einzelnen offenen Fabrik vollständig beliefert zu werden.
 	
-	Für Letzteres gibt es zwei naheliegende Ansätze: Entweder man passt die \UFL- und/oder \MST-Phase so an, dass bereits hier die Fabrikkapazitäten berücksichtigt und dementsprechend viele Fabriken geöffnet werden. Oder man erlaubt dem Algorithmus zusätzlich noch in der Large-Demand- bzw. Merge-Phase bei Bedarf weiter Fabriken zu eröffnen. 
+	Für Letzteres gibt es zwei naheliegende Ansätze: Entweder man passt die \UFL- und/oder \MST-Phase so an, dass bereits hier die Fabrikkapazitäten berücksichtigt und dementsprechend viele Fabriken geöffnet werden. Oder man erlaubt dem Algorithmus zusätzlich noch in Large-Demand- und Merge-Phase bei Bedarf weiter Fabriken zu eröffnen. 
 	
 	Der erste Ansatz ließe sich beispielsweise dadurch verwirklichen, dass statt einer \UFL-Instanz eine Instanz des \emph{nonuniform Capacitated Facility Location Problem}s erstellt und (approximativ) gelöst wird. Ein entsprechender auf lokaler Suche basierender Approximationsalgorithmus wird in \cite{Pal01facilitylocation} beschrieben. Alternativ (oder auch zusätzlich) könnte man versuchen beim Erstellen des Spannbaumes die Fabrikkapazitäten zu berücksichtigen. Allerdings ist nicht klar, wie eine entsprechende Anpassung dieser Phase aussehen könnte.
 	
-	Der zweite Ansatz - neue Fabriken bei Bedarf eröffnen - ist dagegen deutlich leichter zu implementieren und ist daher auch der, der in diesem Programmierprojekt weiterverfolgt wurde. Er hat allerdings den Nachteil, dass dadurch der Zusammenhang zwischen den Kosten der in \UFL- und \MST-Phase gefundenen Lösungen und denen der letztendlich bestimmten Lösung der \CLRHFC-Instanz verloren gehen (siehe dazu \cref{sec:Analyse:theoretisch}).
+	Der zweite Ansatz - neue Fabriken bei Bedarf eröffnen - ist dagegen deutlich leichter zu implementieren und ist daher auch der, der in diesem Softwareprojekt weiterverfolgt wurde. Er hat allerdings den Nachteil, dass dadurch der Zusammenhang zwischen den Kosten der in \UFL- und \MST-Phase gefundenen Lösungen und denen der letztendlich bestimmten Lösung der \CLRHFC-Instanz verloren geht (siehe dazu \cref{sec:Analyse:theoretisch}).
 
 	\subsection{Der Algorithmus und seine Implementierung}
 	
-	Die Implementierung des angepassten Algorithmus erfolgt im Wesentlichen durch eine von der originalen \lstinline|Solver|-Klasse abgeleiteten Klasse \lstinline|SolverCap| (bzw. eine wiederum davon abgeleitete Klasse \lstinline|SolverCapIt|). Dadurch kann die \lstinline|main|-Funktion weitgehend gleich bleiben und es muss lediglich zu Beginn entschieden werden, welche Variante der Solver-Klasse (und damit welche Variante des Algorithmus) verwendet werden soll. Innerhalb der abgeleiteten \lstinline|Solver|-Klassen werden dann die anzupassenden Funktionen überschrieben, während die restlichen Funktionen unverändert bleiben.
+	Die Implementierung des angepassten Algorithmus erfolgt im Wesentlichen in einer von der originalen \lstinline|Solver|-Klasse abgeleiteten Klasse \lstinline|SolverCap| (bzw. eine wiederum davon abgeleitete Klasse \lstinline|SolverCapIt|). Dadurch kann die \lstinline|main|-Funktion weitgehend gleich bleiben und es muss lediglich zu Beginn entschieden werden, welche Variante der Solver-Klasse (und damit welche Variante des Algorithmus) verwendet werden soll. Innerhalb der abgeleiteten \lstinline|Solver|-Klassen werden dann die anzupassenden Funktionen überschrieben, während die restlichen Funktionen unverändert bleiben.
 	
-	\begin{lstlisting}[caption=Der weitere Ablauf des Programms kann unabhängig von der verwendeten Version des Solvers beschrieben werden]
+	\begin{lstlisting}[caption=Zu Beginn der \lstinline|main|-Funktion wird entschieden welcher Solver verwendet wird. Der weitere Ablauf des Programms kann unabhängig davon beschrieben werden.]
 Solver* s;
 if(inst.is_depot_cap_relevant()) {
 	if(itCapAlgorithm) 	s = new SolverCapIt(inst, tspPostOpt);
@@ -432,16 +428,16 @@ if(inst.is_depot_cap_relevant()) {
 Solution sol = s->solve();
 	\end{lstlisting}
 	
-	Zusätzlich zur neuen \lstinline|Solver|-Klasse musste außerdem in der Klasse \lstinline|Solution| eine neue Funktion  \lstinline|isFeasable2()| zur Zulässigkeitsprüfung erstellt werden. Denn um die Zulässigkeit von Lösungen der \CLR-Instanz schnell prüfen zu können, wurden einige Eigenschaften dieser Lösungen genutzt, die bei Lösungen einer \CLRHFC{} nicht mehr garantiert werden können - nämlich die \emph{single assignment}-Eigenschaft (jeder Kunde wird von genau einer Fabrik beliefert) und die \emph{single tour}-Eigenschaft für Kunden mit kleinem Bedarf. Außerdem sollte bei \CLRHFC-Lösungen noch geprüft werden, ob auch die Fabrikkapazitäten eingehalten werden.
+	Zusätzlich zur neuen \lstinline|Solver|-Klasse musste außerdem in der Klasse \lstinline|Solution| eine neue Funktion  \lstinline|isFeasable2()| zur Zulässigkeitsprüfung geschrieben werden. Denn um die Zulässigkeit von Lösungen der \CLR-Instanz schnell prüfen zu können, wurden einige Eigenschaften dieser Lösungen genutzt, die bei Lösungen einer \CLRHFC{} nicht mehr garantiert werden können - nämlich die \emph{single assignment}-Eigenschaft (jeder Kunde wird von genau einer Fabrik beliefert) und die \emph{single tour}-Eigenschaft für Kunden mit kleinem Bedarf (gesamter Bedarf wird von einer Tour erfüllt). Zudem sollte bei \CLRHFC-Lösungen noch geprüft werden, ob auch die Fabrikkapazitäten eingehalten werden.
 	
 	In der folgenden Beschreibung bezeichnen $\tilde{d}: \ClientSet \to \IR_{\geq 0}$ und $\tilde{l}: \FacilitySet \to \IR_{\geq 0}$ den zum jeweiligen Zeitpunkt verbleibenden Bedarf der Kunden bzw. die verbleibende Kapazität der Fabriken.
 	
 
 	\subsubsection{Toursplitting}
 	
-	Wann immer im ursprünglichen Algorithmus während der Merge-Phase eine neue Tour erstellt wird (aus einem Relieve-Tree in der Funktion \lstinline|relieveSubtree| oder als Remaining-Tour in der Funktion \lstinline|mergePhase|), so wird jetzt zusätzlich noch eine neue Funktion \lstinline|splitTour| aufgerufen. Diese zerteilt die übergebene Tour in kleinere Teiltouren (entsprechend den verfügbaren Fabrikkapazitäten) und verbindet sie mit passenden Fabriken. Im Falle der Relieve-Trees wird dafür die eigene Partitionierung in Touren mit Bedarf zwischen $u/2$ und $u$ weggelassen und dafür die Fahrzeugkapazitäten in der Zerteilung in Teiltouren mitberücksichtigt.
+	Wann immer im ursprünglichen Algorithmus während der Merge-Phase eine neue Tour erstellt wird (aus einem Relieve-Tree in der Funktion \lstinline|relieveSubtree| oder als Remaining-Tour in der Funktion \lstinline|mergePhase|), so wird jetzt zusätzlich noch eine neue Funktion \lstinline|splitTour| aufgerufen. Diese zerteilt die übergebene Tour in kleinere Teiltouren (entsprechend den verfügbaren Fabrikkapazitäten) und verbindet sie mit passenden Fabriken. Im Falle der Relieve-Trees wird dafür die Partitionierung in Touren mit Bedarf zwischen $u/2$ und $u$ weggelassen und dafür die Fahrzeugkapazitäten in der Zerteilung in Teiltouren mitberücksichtigt.
 	
-	Sei dazu $T$ die zu zerlegende Tour (oBdA bestehe diese nur aus Kunden mit verbleibendem Bedarf $>0$). Unter den offenen Fabriken mit noch verfügbarer Kapazität wählen wir nun die \glqq am besten\grqq{} zu den Kunden in $T$ passende Fabrik $f$ aus. Diese Fabrik wird dann mit dem ihr am nächsten liegenden Kunden aus $T$ verbunden und von diesem aus $T$ soweit durchlaufen wie die Kapazität von $f$ (und die Fahrzeugkapazität) reicht. Die dadurch vollständig versorgten Kunden werden nun aus $T$ entfernt, beim letzten Kunden der Tour wird der Bedarf entsprechend der gelieferten Menge reduziert und die Kapazität von $f$ wird verringert. Dann suchen wir erneut eine \glqq beste Fabrik\grqq{} für die in $T$ verbliebenen Kunden (sofern $T$ noch nicht leer ist).
+	Sei dazu $T$ die zu zerlegende Tour (oBdA bestehe diese nur aus Kunden mit verbleibendem Bedarf $>0$). Unter den offenen Fabriken mit noch verfügbarer Kapazität wählen wir nun die \glqq am besten\grqq{} zu den Kunden in $T$ passende Fabrik $f$ aus. Diese Fabrik wird dann mit dem ihr am nächsten liegenden Kunden aus $T$ verbunden und von diesem aus $T$ soweit durchlaufen wie die Kapazität von $f$ (und die Fahrzeugkapazität) reicht. Die dadurch vollständig versorgten Kunden werden nun aus $T$ entfernt, beim letzten Kunden der Tour wird der Bedarf entsprechend der gelieferten Menge reduziert und die Kapazität von $f$ wird verringert. Danach beginnt wieder eine Suche nach der \glqq besten Fabrik\grqq{} für die in $T$ verbliebenen Kunden (sofern $T$ noch nicht leer ist).
 	
 	Zu klären bleibt damit noch, wie die \glqq beste Fabrik\grqq{} zu einer gegebenen Menge $M$ an Kunden bestimmt wird. Dies geschieht in der Funktion \lstinline|findBestFacility|. Dazu wird zunächst der momentane Gesamtbedarf der übergebenen Menge $\tilde{d}(M)$ bestimmt und dann jeder offenen Fabrik $f$ wie folgt ein Wert zugeordnet:
 	\[\text{Wert}(f) :=  \frac{\min\{\tilde{l}(f), \tilde{d}(M)\}}{2 c(f,M)}\]
@@ -453,7 +449,7 @@ Solution sol = s->solve();
 	
 	In der Klasse \lstinline|SolverCap| wird bei der Auswahl der neu zu eröffnenden Fabrik eine Art Greedy-Ansatz verfolgt: Es wird jeder geschlossenen Fabrik $f$ ein Wert
 	\[\text{Wert}(f) :=  \frac{\min\{\tilde{l}(f), \tilde{d}(M)\}}{2 c(f,M) + \phi(f)}\]
-	zu gewiesen und dann die Fabrik mit dem höchsten Wert zusätzlich eröffnet.
+	zugewiesen und dann die Fabrik mit dem höchsten Wert zusätzlich eröffnet.
 	
 \begin{lstlisting}[caption=Die Klasse SolverCap]
 class SolverCap: public Solver {
@@ -495,7 +491,7 @@ protected:
 	
 	\subsubsection{Fabrikeröffnung durch wiederholte \UFL/\MST-Phasen}
 	
-	In der Klasse \lstinline|SolverCapIt| werden die neu zu eröffnenden Fabriken dagegen mit Hilfe einer neuen \UFL- und \MST-Phase bestimmt. Dazu wird eine temporäre \CLR-Instanz erstellt, welche nur die Kunden mit noch zu erfüllendem Bedarf und die (derzeit geschlossenen) Fabriken mit übriger Kapazität enthält. Auf dieser Instanz wird dann die übliche \UFL- und \MST-Phase durchgeführt und alle dabei geöffneten Fabriken werden nun auch in der ursprünglichen \CLRHFC-Instanz zusätzlich geöffnet. 
+	In der Klasse \lstinline|SolverCapIt| werden die neu zu eröffnenden Fabriken dagegen mit Hilfe einer neuen \UFL- und \MST-Phase bestimmt. Dazu wird eine temporäre \CLR-Instanz erstellt, welche nur die Kunden mit noch zu erfüllendem Bedarf und die (derzeit geschlossenen) Fabriken mit übriger Kapazität enthält. Auf dieser Instanz wird dann die übliche \UFL- und \MST-Phase durchgeführt und alle dabei geöffneten Fabriken werden anschließend auch in der ursprünglichen \CLRHFC-Instanz zusätzlich geöffnet. 
 	
 	Nachdem dies geschehen ist, werden alle bisher gefundenen Touren gelöscht und die Tourenfindungsphase (Large Demand und Merge) neu gestartet. Dies wird so oft wiederholt bis ausreichend Fabriken geöffnet sind, um alle Kunden vollständig zu versorgen.
 	
@@ -525,11 +521,11 @@ public:
 	
 	\subsubsection{Zulässigkeitsprüfung}
 	
-	Vor dem Ausgeben der Lösung bietet die Klasse \lstinline|Solution| die Möglichkeit die gefundene Lösung auf Zulässigkeit zu prüfen, d.h. ob durch die gefundenen Touren die Bedarfe aller Kunden erfüllt werden können ohne die Fahrzeug- oder Fabrikkapazitäten zu überschreiten. Hierzu wird ein maximaler Fluss auf folgendem gerichteten Graphen $H$ (siehe auch \cref{fig:MaxFlowGraph}) bestimmt:
+	Vor dem Ausgeben der Lösung bietet die Klasse \lstinline|Solution| die Möglichkeit an die gefundene Lösung auf Zulässigkeit zu prüfen, d.h. ob durch die gefundenen Touren die Bedarfe aller Kunden erfüllt werden können ohne die Fahrzeug- oder Fabrikkapazitäten zu überschreiten. Für \CLRHFC-Lösungen wird hierzu ein maximaler Fluss auf folgendem gerichteten Graphen $H$ (siehe auch \cref{fig:MaxFlowGraph}) bestimmt:
 	\begin{itemize}
 		\item $H$ besitzt je einen Knoten für jede Fabrik, jede Tour und jeden Kunden, sowie zusätzlich eine Quelle und eine Senke.
 		\item Von der Quelle gibt es jeweils eine Kante zu jeder offenen Fabrik mit der Kapazität der Fabrik als Kantenkapazität.
-		\item Jede Tour hat eine eingehende Kante mit Kapazität $u$ von ihrer Startfabrik und ausgehende (unbeschränkte) Kanten zu jedem Kunden, der auf dieser Tour liegt.
+		\item Jede Tour hat eine eingehende Kante mit Kapazität $u$ von ihrer Startfabrik und ausgehende (unbeschränkte) Kanten zu allen Kunden, die auf dieser Tour liegen.
 		\item Von jedem Kunden aus führt eine Kante zur Senke mit dem Bedarf des Kunden als Kantenkapazität.
 	\end{itemize}
 	
@@ -596,17 +592,17 @@ public:
 	\end{lemma}
 
 	\begin{proof}
-		Ein Fluss in diesem Graphen entspricht gerade einer Zuteilung von Produktion der Fabriken über die bestehenden Touren zu den Kunden. Die Einhaltung der Kantenkapazitäten zwischen Quelle und Fabriken bzw. Fabriken und Touren stellt die Einhaltung der Fabrik- bzw. Fahrzeugkapazitäten sicher und umgekehrt. Und schließlich schließlich sorgen die Kapazitäten der Kanten von den Kunden zur Senke dafür, dass kein Kunde mehr bekommt als seinem Bedarf ist. Somit entspricht ein Flusswert gleich der Summe aller Bedarfe gerade einer Verteilung bei der alle Bedarfe genau erfüllt werden.
+		Ein Fluss in diesem Graphen entspricht gerade einer Zuteilung von Produktion der Fabriken über die bestehenden Touren zu den Kunden. Die Einhaltung der Kantenkapazitäten zwischen Quelle und Fabriken bzw. Fabriken und Touren stellt die Einhaltung der Fabrik- bzw. Fahrzeugkapazitäten sicher und umgekehrt. Weiterhin sorgen die Kapazitäten der Kanten von den Kunden zur Senke dafür, dass kein Kunde mehr bekommt als sein Bedarf ist. Somit entspricht ein Flusswert gleich der Summe aller Bedarfe gerade einer Verteilung bei der alle Bedarfe genau erfüllt werden.
 	\end{proof}
 
-	Um also die Zulässigkeit einer gefundenen Lösung zu überprüfen erstellt die Funktion \lstinline|isFeasable2| zunächst wie oben beschrieben eine Instanz für ein Max-Fluss-Problem. Dann wird mit Hilfe einer leicht vereinfachten Implementierung des Edmonds-Karp-Algorithmus (in der in \cite{EdmondsKarp} beschriebenen Form) ein maximaler Fluss in diesem Graphen bestimmt und schließlich dessen Flusswert mit der Summe aller Bedarfe verglichen. 
+	Um also die Zulässigkeit einer gefundenen Lösung zu überprüfen erstellt die Funktion \lstinline|isFeasable2| zunächst wie oben beschrieben eine Instanz des Max-Fluss-Problems. Dann wird mit Hilfe einer leicht vereinfachten Implementierung des Edmonds-Karp-Algorithmus (in der in \cite{EdmondsKarp} beschriebenen Form) ein maximaler Fluss in diesem Graphen bestimmt und schließlich dessen Flusswert mit der Summe aller Bedarfe verglichen. 
 	
 	Dazu gibt es neben der Funktion \lstinline|EdmondsKarp| selbst eine Hilfsfunktion \lstinline|shortestSTPath|, welche mit Hilfe einer Breitensuche einen kürzesten augmentierenden Pfad von der Quelle zur Senke bestimmt.
 	   	
 
 	\subsection{Analyse der Algorithmen}\label{sec:Analyse}
 	
-	Zum Abschluss wollen wir uns nun noch über die Qualität des oben beschriebenen Algorithmus Gedanken machen. Dazu werden wir zunächst einige allgemeine Überlegungen, insbesondere zu für den Algorithmus besonders problematische Konstellationen, anstellen und dann den Algorithmus auf einigen zufällig erzeugten Instanzen testen.
+	Zum Abschluss wollen wir uns nun noch über die Qualität des oben beschriebenen Algorithmus Gedanken machen. Dazu werden wir zunächst einige allgemeine Überlegungen, insbesondere zu für den Algorithmus problematischen Konstellationen anstellen und dann den Algorithmus auf einigen zufällig erzeugten Instanzen testen.
 	
 	\subsubsection{Theoretische Betrachtungen}\label{sec:Analyse:theoretisch}
 	
@@ -616,7 +612,7 @@ public:
 	
 	In \cite{AAfCLR} werden zwei untere Schranken für die Kosten der optimalen \CLR-Lösung gezeigt (Lemmas 1 und 2): Die Kosten der optimalen Lösungen der im Algorithmus verwendeten \UFL-Instanz sowie die der \MST-Instanz. Da jede Lösung einer \CLRHFC-Instanz insbesondere auch eine zulässige Lösung der zugrunde liegenden \CLR-Instanz ist, gelten diese Schranken weiterhin.
 	
-	Während jedoch im Fall der \CLR-Problem aus den beiden Werten zusammen auch eine obere Schranke für die Kosten der optimalen \CLR-Lösung bestimmt werden kann (auf diese Weise wird ja gerade die Approximationsgüte des Algorithmus bewiesen), ist dies für das \CLRHFC-Problem nicht mehr der Fall. Insbesondere können diese beiden unteren Schranken hier also beliebige weit von den Kosten der optimalen \CLRHFC-Lösung entfernt liegen.
+	Während jedoch im Fall der \CLR-Problem aus den beiden Werten zusammen auch eine obere Schranke für die Kosten der optimalen \CLR-Lösung bestimmt werden kann (auf diese Weise wird ja gerade die Approximationsgüte des Algorithmus bewiesen), ist dies für das \CLRHFC-Problem nicht mehr der Fall. Insbesondere können hier, wie wir gleich sehen werden, diese beiden unteren Schranken beliebige weit von den Kosten der optimalen \CLRHFC-Lösung entfernt liegen.
 	
 	Ein einfaches Beispiel hierfür erhält man bereits durch eine Instanz mit einem Kunden und zwei Fabrikstandorten (\cref{fig:bsp:schlechteUntereSchranken}). Wählt man Bedarf und Fabrikkapazitäten so, dass nur beide Standorte zusammen den Kunden versorgen können, so müssen in der \CLRHFC-Lösung beide Fabriken eröffnet und genutzt werden, während sowohl für \UFL{} als auch für \MST{} eine der beiden genügt. Macht man nun einen der beiden Standorte billig (nahe am Kunden und gernige Eröffnungskosten) und den anderen sehr viel teurer, so können die Kosten für die optimale \CLRHFC-Lösung beliebig weit von den Kosten der \UFL- und \MST-Lösungen entfernt werden.
 	
@@ -628,7 +624,7 @@ public:
 		\caption{Eine Instanz mit billigen \UFL- und \MST-Lösungen, aber teurer \CLRHFC-Lösung}\label{fig:bsp:schlechteUntereSchranken}
 	\end{figure}
 		
-	Es sind allerdings nicht nur die in \UFL- und \MST-Phase ermittelten Kosten nicht mehr zwangsläufig eine gute Abschätzung für die tatsächlichen Kosten, es kann auch passieren, dass die in diesen Phasen getroffene Entscheidung über die zu eröffnenden Fabriken keinen Nutzen mehr bringen. Nämlich dann, wenn hierbei lediglich Fabriken mit sehr geringer Kapazität eröffnet werden. Diese sind dann für die tatsächliche Lösung nicht hilfreich bzw. im schlimmsten Fall sogar schädlich, da erst eine Tour angelegt wird um deren Kapazität zu nutzen und dann eine weitere Tour von einer zusätzlich eröffneten Fabrik notwendig ist, die jedoch alleine schon alles hätte übernehmen können (siehe \cref{fig:bsp:UFLMSTnutzlos}).
+	Es sind allerdings nicht nur die in \UFL- und \MST-Phase ermittelten Kosten nicht mehr zwangsläufig eine gute Abschätzung für die tatsächlichen Kosten, es kann sogar passieren, dass die in diesen Phasen getroffene Entscheidung über die zu eröffnenden Fabriken gar keinen Nutzen mehr bringen. Nämlich dann, wenn hierbei lediglich Fabriken mit sehr geringer Kapazität eröffnet werden. Diese sind dann für die tatsächliche Lösung nicht hilfreich bzw. im schlimmsten Fall sogar schädlich, da erst eine Tour angelegt wird um deren Kapazität zu nutzen und dann eine weitere Tour von einer zusätzlich eröffneten Fabrik notwendig ist, owohl diese alleine schon alles hätte übernehmen können (siehe \cref{fig:bsp:UFLMSTnutzlos}).
 	
 	Beachte allerdings, dass diese beiden Problem ihre volle Wirkung nur in der Greedy-Variante entfalten. In der iterativen Variante dagegen wird das \UFL/\MST-Verfahren ja auch für die zusätzlich zu eröffnenden Fabriken verwendet und sobald genügend Fabriken geöffnet sind, wird die Tourfindungsphase komplett neu gestartet, sodass die Gefahr geringer ist, dass kleine Fabriken zu unnötigen Touren führen.
 		
@@ -637,10 +633,10 @@ public:
 		\includegraphics[width=.24\textwidth]{bilder/beispiele/bsp2-UFLMST.pdf}
 		\includegraphics[width=.24\textwidth]{bilder/beispiele/bsp2-Greedy.pdf}
 		\includegraphics[width=.24\textwidth]{bilder/beispiele/bsp2-It.pdf}
-		\caption{Eine Instanz, in der die \UFL- und \MST-Lösung nicht hilfreich ist (Instanz, \UFL- und \MST-Lsg, von Greedy gefundene Lsg, von Iterativ gefundene Lsg (optimal!))}\label{fig:bsp:UFLMSTnutzlos}
+		\caption{Eine Instanz, in der die \UFL- und \MST-Lösung nicht hilfreich ist (Instanz, \UFL- und \MST-Lsg., von Greedy gefundene Lsg., von Iterativ gefundene (optimale) Lsg.)}\label{fig:bsp:UFLMSTnutzlos}
 	\end{figure}
 
-	Ein noch größeres Problem ist jedoch, dass Fabriken mit geringer Kapazität auch den minimalen Spannbaum unnütz machen können. Gibt es in einer Instanz viele billige Fabrikstandorte mit geringer Kapazität, so zerfällt der Spannbaum in viele Komponenten. Da dieser Baum aber in der Tourenfindungsphase zur sinnvollen Gruppierung der Kunden genutzt wird, führt dies dazu, dass nun für jeden Kunden eine eigene Tour erstellt wird, obwohl diese evtl. mit einer einzigen Tour versorgt werden könnten (vgl. \cref{fig:bsp:schlechterMST}).
+	Ein noch größeres Problem ist jedoch, dass Fabriken mit geringer Kapazität auch den minimalen Spannbaum unnütz machen können. Gibt es in einer Instanz viele billige Fabrikstandorte mit geringer Kapazität, so zerfällt der Spannbaum in viele Komponenten. Da dieser Baum aber in der Tourenfindungsphase zur sinnvollen Gruppierung der Kunden genutzt wird, führt dies im schlimmsten Fall dazu, dass nun für jeden Kunden eine eigene Tour erstellt wird, obwohl diese evtl. mit einer einzigen Tour versorgt werden könnten (vgl. \cref{fig:bsp:schlechterMST}).
 	
 	\begin{figure}[h]\centering
 		\includegraphics[width=.19\textwidth]{bilder/beispiele/bsp3-instance.pdf}
@@ -651,7 +647,7 @@ public:
 		\caption{Eine Instanz, mit schlechten \MST{} (Instanz, \MST-Lsg, Greedy-Lsg, iterative Lsg, optimale Lsg.)}\label{fig:bsp:schlechterMST}
 	\end{figure}
 
-	Diese Erkenntnis führt uns schließlich auch zu einem negativen Resultat über die Approximationsgüte des \CLRHFC-Algorithmus:
+	Diese Erkenntnis führt uns schließlich auch zu einem allgemeinen negativen Resultat über die Approximationsgüte des \CLRHFC-Algorithmus:
 	
 	\begin{satz}\label{satz:schlechteApproximationsguete}
 		Der Algorithmus für \CLRHFC{} ist bereits in der euklidischen Ebene höchstens $\mathcal{O}(N)$-approximativ, wobei $N$ die Größe der Eingabeinstanz beschreibt.
@@ -679,7 +675,7 @@ public:
 	
 	Um trotz der fehlenden bewiesen Approximationsgüte eine gewisse Einschätzung für die Qualität der gefundenen Lösungen zu bekommen sowie die beiden Varianten des Algorithmus miteinander vergleichen zu können, wurden die beiden Algorithmen auf einigen zufällig generierten Instanzen getestet. 
 	
-	Zu diesem Zweck habe ich das Programm um eine Funktion \lstinline|writeCLRhFCMIP| ergänzt, welche zu einer Instanz von \CLRHFC{} das passende MIP im LP-Dateiformat von CPLEX (siehe \cite{LPFileFormat}) erzeugt. Das so erzeugte MIP kann dann beispielsweise mit dem Solver SCIP (\cite{SCIP}) gelöst werden bzw. können mit diesem untere und obere Schranken für die optimale Lösung bestimmt werden.
+	Zu diesem Zweck habe ich das Programm um eine Funktion \lstinline|writeCLRhFCMIP| ergänzt, welche zu einer Instanz von \CLRHFC{} das passende MIP im LP-Dateiformat von CPLEX (siehe \cite{LPFileFormat}) erzeugt. Das so erhaltene MIP kann dann beispielsweise mit dem Solver SCIP (\cite{SCIP}) gelöst werden bzw. können mit diesem untere und obere Schranken für die optimale Lösung bestimmt werden.
 	
 	Um das MIP zumindest ein wenig kleiner zu halten, wird dabei nicht wie in \cref{sec:CLRHFC-Def} beschrieben zu \emph{jeder} möglichen Tour eine eigene Variable eingeführt, sondern zu jeder Teilmenge der Kunden und jeder Fabrik nur eine optimale Tour berücksichtigt. Dadurch reduziert sich die Zahl der Variablen in etwa um einen Faktor $n!$. Zwar muss dazu für jede solche Teilmenge ein TSP gelöst werden (dies geschieht hier in der Funktion \lstinline|solveTSP| mit Hilfe einer sehr einfachen Branch-and-Bound-Heuristik), da das MIP jedoch sowieso nur für sehr kleine Instanzgrößen gelöst werden kann (bereits bei 10 Kunden und 5 Fabriken besteht das MIP aus $\sim 31.000$ Variablen und $\sim 36.000$ Bedingungen), stellt dies hier kein Hindernis dar.
 
@@ -781,11 +777,11 @@ Allgemein ist zu beobachten, dass die iterative Variante des Algorithmus fast im
 		Spalten (vlnr.): Kosten der optimalen Lsg. der \UFL- bzw. \MST-Instanzen, Zahl der geöffneten Fabriken in Greedy-Lsg., Zahl der Touren, Gesamtkosten und Vergleich der Gesamtkosten zu den Kosten der \UFL-Lsg, analog für iterative Lsg}\label{tab4}
 	\end{figure}
 
-Bei den Instanzen mit $100$ Kunden liegen die Kosten der vom iterativen Verfahren gefundenen Lösungen bis zu $150\%$ über denen der optimalen \UFL-Lösung. Es ist allerdings anzunehmen, dass diese die tatsächlichen Kosten der optimalen \CLRHFC-Lösung im allgemeinen deutlich unterschätzen (bei den kleineren Instanzen liegen die Kosten der optimalen \CLRHFC-Lösung meisten $\sim 50\%$ höher). 
+Bei den Instanzen mit $100$ Kunden liegen die Kosten der vom iterativen Verfahren gefundenen Lösungen bis zu $150\%$ über denen der optimalen \UFL-Lösung. Es ist allerdings anzunehmen, dass diese die tatsächlichen Kosten der optimalen \CLRHFC-Lösung im Allgemeinen deutlich unterschätzen (bei den kleineren Instanzen liegen die Kosten der optimalen \CLRHFC-Lösung meisten $\sim 50\%$ höher). 
 
 Festzuhalten ist auch, dass sich eine geringe Gesamtfabrikkapazität für die Greedy-Strategie stärker negativ bemerkbar zu machen scheint als für die iterative Strategie.
 	
-	Bei den großen Instanzen schließlich ist die gefundene Lösung für jede der getesteten Instanzen noch mindestens 3-approximativ und in der Hälfte der Fälle sogar weniger als doppelt so teuer wie die optimale Lösung. Zudem zeigt sich hier, dass der Algorithmus immer noch relativ schnell arbeitet: Auf einem durchschnittlichen Laptop benötigt die Greedy-Variante hier weniger als 2 Sekunden, die iterative maximaler als 5 Sekunden. Deutlich stärker fällt in diesen Fällen die anscheinend verhältnismäßig ineffiziente Implementierung des Edmonds-Karp-Algorithmus mit zum Teil mehreren Minuten Laufzeit ins Gewicht.
+	Bei den großen Instanzen schließlich ist die gefundene Lösung für jede der getesteten Instanzen noch mindestens 3-approximativ und in der Hälfte der Fälle sogar weniger als doppelt so teuer wie die optimale Lösung. Zudem zeigt sich hier, dass der Algorithmus immer noch relativ schnell arbeitet: Auf einem durchschnittlichen Laptop benötigt die Greedy-Variante hier weniger als 2 Sekunden, die iterative durchschnittlich 5 Sekunden. Deutlich stärker fällt in diesen Fällen die anscheinend verhältnismäßig ineffiziente Implementierung des Edmonds-Karp-Algorithmus mit zum Teil mehreren Minuten Laufzeit ins Gewicht.
 	
 	\begin{figure}[h]\centering
 		\includegraphics[width=.3\textwidth]{bilder/GreedyBesser-Greedy.pdf}
@@ -798,13 +794,13 @@ Festzuhalten ist auch, dass sich eine geringe Gesamtfabrikkapazität für die Gr
 
 \section*{Ausblick}
 	
-Wir haben nun also gesehen wie Large Demand- und Merge-Phase des $\CLR$-Algorithmus so angepasst werden können, dass dieser auch für \CLRHFC-Instanzen zulässige Lösungen findet. Ferner hat die heuristische Betrachtung gezeigt, dass dabei zumindest in der euklidischen Ebene bereits meist eine akzeptable Approximationsgüte erreicht wird. Gleichzeitig zeigt aber \Cref{satz:schlechteApproximationsguete}, dass es - ebenfalls schon in der euklidischen Ebene - auch Instanzen gibt, auf denen die Approximation beliebig schlecht wird.
+Wir haben nun also gesehen wie Large Demand- und Merge-Phase des \CLR-Algorithmus so angepasst werden können, dass dieser auch für \CLRHFC-Instanzen zulässige Lösungen findet. Ferner hat die heuristische Betrachtung gezeigt, dass dabei zumindest in der euklidischen Ebene bereits meist eine akzeptable Approximationsgüte erreicht wird. Gleichzeitig zeigt aber \Cref{satz:schlechteApproximationsguete}, dass es - ebenfalls schon in der euklidischen Ebene - auch Instanzen gibt, auf denen die Approximation beliebig schlecht wird.
 	
-Eine naheliegender nächster Schritt auf der Suche nach einem guten Approximationsalgorithmus wäre nun vielleicht auch die \UFL- und \MST-Phasen anzupassen, sodass die Fabrikkapazitäten bereits dort eine Rolle spielen. Zumindest für den \UFL-Teil sind hierzu auch passende Approximationsalgorithmen bekannt (z.B. \cite{Pal01facilitylocation}), allerdings zeigt etwa das in \cref{fig:bsp:schlechterMST} gezeigte Beispiel, dass dies allein vermutlich nicht ausreichen wird, da auch das Finden eines guten Spannbaums eine zentrale Rolle spielt.
+Eine naheliegender nächster Schritt auf der Suche nach einem guten Approximationsalgorithmus wäre nun auch die \UFL- und \MST-Phasen anzupassen, sodass die Fabrikkapazitäten bereits dort eine Rolle spielen. Zumindest für den \UFL-Teil sind hierzu auch passende Approximationsalgorithmen bekannt (z.B. \cite{Pal01facilitylocation}), allerdings zeigt etwa das in \cref{fig:bsp:schlechterMST} gezeigte Beispiel, dass dies allein vermutlich nicht ausreichen wird, da auch das Finden eines guten Spannbaums eine zentrale Rolle spielt.
 
 Zudem ergibt sich durch das Einführen von Fabrikkapazitäten noch ein neues Problem im Zusammenspiel der \UFL- und \MST-Lösung (selbst wenn die Kapazitäten in diesen berücksichtigt werden): Da ein Kunde in den beiden Lösungen im Allgemeinen mit verschiedenen Fabriken verbunden sein darf, kann es passieren, dass Kunden sich in der Merge-Phase gegenseitig Fabriken \glqq wegnehmen\grqq. 
 
-Denn: Nur weil ein Kunde bspw. in der \MST-Lösung mit einer nahen Fabrik verbunden ist (was dann später zur Abschätzung der tatsächlichen Anbindungskosten dienen soll), ist noch nicht sicher gestellt, dass diese Anbindung auch noch verfügbar ist, wenn dieser Kunde in der Merge-Phase tatsächlich an die Reihe kommt. Es kann vielmehr auch passieren, dass die entsprechende Fabrik zu diesem Zeitpunkt bereits durch andere Kunden voll ausgelastet ist. Es ist anzunehmen, dass derartige Effekte die Beschränkung der Kosten der letztendlich gefundenen Lösung im Allgemeinen deutlich erschwert und evtl. macht dies noch weitere Anpassungen der Merge-Phase nötig.
+Denn: Nur weil ein Kunde beispielsweise in der \MST-Lösung mit einer nahen Fabrik verbunden ist (was dann später zur Abschätzung der tatsächlichen Anbindungskosten dienen soll), ist noch nicht sicher gestellt, dass diese Anbindung auch noch verfügbar ist, wenn dieser Kunde in der Merge-Phase tatsächlich an die Reihe kommt. Es kann vielmehr auch passieren, dass die entsprechende Fabrik zu diesem Zeitpunkt bereits durch andere Kunden voll ausgelastet ist. Es ist anzunehmen, dass derartige Effekte die Beschränkung der Kosten der letztendlich gefundenen Lösung im Allgemeinen deutlich erschweren und eventuell noch weitere Anpassungen der Merge-Phase nötig machen.
 
 \newpage	
 

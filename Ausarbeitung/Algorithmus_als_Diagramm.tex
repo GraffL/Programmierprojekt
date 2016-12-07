@@ -50,7 +50,7 @@
 		\end{algorithmic}\end{minipage}
 	};
 \node [Text, left of=m-facilities, node distance=25em, text width=15em] () 
-	{Kosten beschränkt durch die entsprechenden Eröffnungskosten in \UFL{} und \MST{}};
+	{Kosten beschränkt durch Eröffnungskosten in \UFL{} bzw. $2\times$ Verbindungskosten in \MST{}};
 
 % Große Kunden
 \node [Alg, below of=m-facilities, node distance=4em] (m-big-clients) {
@@ -65,7 +65,7 @@
 	\includegraphics[width=5em]{bilder/largeDemand2.pdf}
 };
 \node [Text, left of=m-big-clients, node distance=25em, text width=15em] () 
-	{Kosten beschränkt durch $2\times$ den entsprechenden Verbindungskosten in \UFL};
+	{Kosten beschränkt durch $2\times$ die entsprechenden Verbindungskosten in \UFL};
 
 % Kleine Kunden
 \node [Alg, below of=m-big-clients, node distance=5em] (m-small-clients) {
@@ -97,7 +97,7 @@
 		\includegraphics[width=5em]{bilder/relieveTour3.pdf}
 	};
 \node [Text, left of=m-relieve, node distance=25em, text width=15em] () 
-	{Kosten beschränkt durch $2\times$ die Kantenkosten im \MST{} und $2\times$ den Verbindungskosten aller Knoten der Tour in \UFL};
+	{Kosten beschränkt durch $2\times$ die Kantenkosten im \MST{} und $2\times$ die Verbindungskosten aller Knoten der Tour in \UFL};
 
 % Rest
 \node [Alg, below of=m-relieve, node distance=7em] (m-remaining) {
@@ -113,7 +113,7 @@
 	\includegraphics[width=5em]{bilder/remainingTour2.pdf}
 };
 \node [Text, left of=m-remaining, node distance=25em, text width=15em] () 
-	{Kosten beschränkt durch $2\times$ den Verbindungskosten in \MST};
+	{Kosten beschränkt durch $2\times$ die Verbindungskosten in \MST};
 
 
 % AUSGABE:
